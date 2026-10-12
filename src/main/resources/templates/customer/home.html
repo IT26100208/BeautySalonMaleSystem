@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Home - Bella Aura</title>
+
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        /* =====================================================
+           BODY + BACKGROUND
+        ===================================================== */
+
+        body {
+
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            min-height: 100vh;
+
+            background-image:
+                    linear-gradient(
+                            rgba(15, 10, 20, 0.55),
+                            rgba(15, 10, 20, 0.55)
+                    ),
+                    url("/images/bg3.jpg");
+
+            background-size: cover;
+
+            background-position: center;
+
+            background-repeat: no-repeat;
+
+            background-attachment: fixed;
+
+            color: white;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =====================================================
+           GLASS SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            right: 20px;
+
+            top: 20px;
+
+            bottom: 20px;
+
+            width: 245px;
+
+            padding: 25px 18px;
+
+            border-radius: 25px;
+
+            background: rgba(255, 255, 255, 0.10);
+
+            border:
+                    1px solid rgba(255, 255, 255, 0.20);
+
+            backdrop-filter: blur(25px);
+
+            -webkit-backdrop-filter: blur(25px);
+
+            box-shadow:
+                    0 20px 50px rgba(0, 0, 0, 0.35),
+
+                    inset 0 1px 0
+                    rgba(255, 255, 255, 0.12);
+
+            z-index: 1000;
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+
+        .logo {
+
+            text-align: center;
+
+            padding-bottom: 25px;
+
+            margin-bottom: 20px;
+
+            border-bottom:
+                    1px solid
+                    rgba(255,255,255,0.12);
+        }
+
+
+        .logo-icon {
+
+            width: 58px;
+
+            height: 58px;
+
+            margin: 0 auto 12px;
+
+            border-radius: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 27px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #ff69b4,
+                            #9b5de5
+                    );
+
+            box-shadow:
+                    0 10px 30px
+                    rgba(255, 105, 180, 0.35);
+        }
+
+
+        .logo h2 {
+
+            font-size: 17px;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        .logo span {
+
+            display: block;
+
+            margin-top: 5px;
+
+            font-size: 11px;
+
+            color:
+                    rgba(255,255,255,0.55);
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ===================================================== */
+
+        .nav-title {
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.5px;
+
+            color:
+                    rgba(255,255,255,0.40);
+
+            margin:
+                    20px 10px 10px;
+        }
+
+
+        .nav-menu {
+
+            list-style: none;
+        }
+
+
+        .nav-menu li {
+
+            margin-bottom: 7px;
+        }
+
+
+        .nav-menu a {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 13px 14px;
+
+            border-radius: 14px;
+
+            color:
+                    rgba(255,255,255,0.70);
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            transition:
+                    all 0.25s ease;
+        }
+
+
+        .nav-menu a:hover {
+
+            background:
+                    rgba(255,255,255,0.10);
+
+            color: white;
+
+            transform:
+                    translateX(-3px);
+        }
+
+
+        .nav-menu a.active {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            rgba(255,105,180,0.30),
+                            rgba(155,93,229,0.30)
+                    );
+
+            color: white;
+
+            border:
+                    1px solid
+                    rgba(255,255,255,0.14);
+
+            box-shadow:
+                    0 8px 25px
+                    rgba(0,0,0,0.15);
+        }
+
+
+        .nav-icon {
+
+            width: 32px;
+
+            height: 32px;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                    rgba(255,255,255,0.08);
+
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           CUSTOMER PROFILE
+        ===================================================== */
+
+        .sidebar-bottom {
+
+            position: absolute;
+
+            bottom: 20px;
+
+            left: 18px;
+
+            right: 18px;
+        }
+
+
+        .customer-profile {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 12px;
+
+            border-radius: 15px;
+
+            background:
+                    rgba(255,255,255,0.07);
+
+            border:
+                    1px solid
+                    rgba(255,255,255,0.10);
+        }
+
+
+        .avatar {
+
+            width: 40px;
+
+            height: 40px;
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #ff69b4,
+                            #9b5de5
+                    );
+
+            font-weight: bold;
+
+            font-size: 15px;
+        }
+
+
+        .customer-info {
+
+            flex: 1;
+        }
+
+
+        .customer-info strong {
+
+            display: block;
+
+            font-size: 12px;
+        }
+
+
+        .customer-info span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            font-size: 10px;
+
+            color:
+                    rgba(255,255,255,0.45);
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ===================================================== */
+
+        .main {
+
+            margin-right: 285px;
+
+            min-height: 100vh;
+
+            padding: 35px;
+        }
+
+
+        /* =====================================================
+           TOP HEADER
+        ===================================================== */
+
+        .top-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 30px;
+        }
+
+
+        .welcome h1 {
+
+            font-size: 32px;
+
+            font-weight: 700;
+
+            letter-spacing: -0.5px;
+        }
+
+
+        .welcome p {
+
+            margin-top: 8px;
+
+            font-size: 13px;
+
+            color:
+                    rgba(255,255,255,0.55);
+        }
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        .logout {
+
+            padding:
+                    11px 18px;
+
+            border-radius: 12px;
+
+            border:
+                    1px solid
+                    rgba(255,255,255,0.15);
+
+            background:
+                    rgba(255,255,255,0.09);
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            transition:
+                    all 0.25s ease;
+        }
+
+
+        .logout:hover {
+
+            background:
+                    rgba(255,70,100,0.25);
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        /* =====================================================
+           GLASS WELCOME CARD
+        ===================================================== */
+
+        .welcome-card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 45px;
+
+            border-radius: 28px;
+
+            background:
+                    rgba(255,255,255,0.12);
+
+            border:
+                    1px solid
+                    rgba(255,255,255,0.20);
+
+            backdrop-filter:
+                    blur(20px);
+
+            -webkit-backdrop-filter:
+                    blur(20px);
+
+            box-shadow:
+                    0 20px 50px
+                    rgba(0,0,0,0.25),
+
+                    inset 0 1px 0
+                    rgba(255,255,255,0.12);
+        }
+
+
+        .welcome-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+
+            height: 220px;
+
+            right: -80px;
+
+            top: -90px;
+
+            border-radius: 50%;
+
+            background:
+                    rgba(255,105,180,0.16);
+        }
+
+
+        .welcome-card h2 {
+
+            font-size: 27px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .welcome-card p {
+
+            max-width: 650px;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+
+            color:
+                    rgba(255,255,255,0.65);
+        }
+
+
+        /* =====================================================
+           QUICK ACTION CARDS
+        ===================================================== */
+
+        .section-title {
+
+            margin-top: 30px;
+
+            margin-bottom: 15px;
+
+            font-size: 17px;
+        }
+
+
+        .quick-actions {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .action-card {
+
+            padding: 25px;
+
+            border-radius: 22px;
+
+            background:
+                    rgba(255,255,255,0.10);
+
+            border:
+                    1px solid
+                    rgba(255,255,255,0.16);
+
+            backdrop-filter:
+                    blur(18px);
+
+            -webkit-backdrop-filter:
+                    blur(18px);
+
+            transition:
+                    all 0.25s ease;
+        }
+
+
+        .action-card:hover {
+
+            transform:
+                    translateY(-5px);
+
+            background:
+                    rgba(255,255,255,0.14);
+
+            box-shadow:
+                    0 15px 35px
+                    rgba(0,0,0,0.22);
+        }
+
+
+        .action-icon {
+
+            width: 45px;
+
+            height: 45px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 15px;
+
+            font-size: 19px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            rgba(255,105,180,0.35),
+                            rgba(155,93,229,0.35)
+                    );
+        }
+
+
+        .action-card h3 {
+
+            font-size: 14px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .action-card p {
+
+            font-size: 11px;
+
+            line-height: 1.5;
+
+            color:
+                    rgba(255,255,255,0.48);
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .sidebar {
+
+                width: 205px;
+            }
+
+            .main {
+
+                margin-right: 230px;
+
+                padding: 25px;
+            }
+
+            .quick-actions {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+
+                position: relative;
+
+                top: auto;
+
+                right: auto;
+
+                bottom: auto;
+
+                width:
+                        calc(100% - 30px);
+
+                height: auto;
+
+                margin: 15px;
+            }
+
+
+            .sidebar-bottom {
+
+                position: relative;
+
+                left: auto;
+
+                right: auto;
+
+                bottom: auto;
+
+                margin-top: 20px;
+            }
+
+
+            .main {
+
+                margin-right: 0;
+
+                padding: 20px 15px;
+            }
+
+
+            .nav-menu {
+
+                display: grid;
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 5px;
+            }
+
+
+            .top-header {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 15px;
+            }
+
+
+            .logout {
+
+                width: 100%;
+            }
+
+
+            .quick-actions {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .welcome-card {
+
+                padding: 30px 25px;
+            }
+        }
+
+
+        @media (max-width: 450px) {
+
+            .nav-menu {
+
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+
+                font-size: 25px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     RIGHT SIDE MENU
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ✂
+        </div>
+
+        <h2>Bella Aura</h2>
+
+        <span>
+            Customer Portal
+        </span>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+
+    <ul class="nav-menu">
+
+
+        <li>
+
+            <a href="#home"
+               class="active">
+
+                <span class="nav-icon">
+                    ⌂
+                </span>
+
+                Home
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="#appointments">
+
+                <span class="nav-icon">
+                    ◷
+                </span>
+
+                My Appointments
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="#services">
+
+                <span class="nav-icon">
+                    ✦
+                </span>
+
+                Services
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="#profile">
+
+                <span class="nav-icon">
+                    ♙
+                </span>
+
+                My Profile
+
+            </a>
+
+        </li>
+
+
+        <li>
+
+            <a href="#loyalty">
+
+                <span class="nav-icon">
+                    ♡
+                </span>
+
+                Loyalty
+
+            </a>
+
+        </li>
+
+
+    </ul>
+
+
+    <!-- ACCOUNT -->
+
+    <div class="nav-title">
+        Account
+    </div>
+
+
+    <ul class="nav-menu">
+
+        <li>
+
+            <a href="#settings">
+
+                <span class="nav-icon">
+                    ⚙
+                </span>
+
+                Settings
+
+            </a>
+
+        </li>
+
+    </ul>
+
+
+    <!-- CUSTOMER PROFILE -->
+
+    <div class="sidebar-bottom">
+
+        <div class="customer-profile">
+
+            <div class="avatar">
+                C
+            </div>
+
+            <div class="customer-info">
+
+                <strong>
+                    Customer
+                </strong>
+
+                <span>
+                    Member
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="top-header">
+
+
+        <div class="welcome">
+
+            <h1>
+                Welcome Back 👋
+            </h1>
+
+            <p>
+                We're happy to see you again.
+            </p>
+
+        </div>
+
+
+        <!-- LOGOUT -->
+
+        <form th:action="@{/logout}"
+              method="post">
+
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+
+            <button type="submit"
+                    class="logout">
+
+                ↪ Logout
+
+            </button>
+
+
+        </form>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         WELCOME CARD
+    ================================================= -->
+
+    <section class="welcome-card">
+
+
+        <h2>
+            Welcome to Bella Aura
+        </h2>
+
+
+        <p>
+
+            You have successfully logged in as a customer.
+            Explore our services, manage your appointments,
+            view your loyalty information and update your profile.
+
+        </p>
+        ```
