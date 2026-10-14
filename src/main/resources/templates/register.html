@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -7,7 +8,8 @@
 
     <title>Register - Bella Aura</title>
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Same stylesheet as the login page -->
+    <link rel="stylesheet" th:href="@{/css/login-style.css}">
 </head>
 
 <body>
@@ -17,7 +19,6 @@
     <div class="login-box register-box">
 
         <h1>Bella Aura</h1>
-
         <h2>Create Customer Account</h2>
 
         <div th:if="${error}" class="alert error">
@@ -33,12 +34,8 @@
                    th:value="${_csrf.token}">
 
             <!-- First Name -->
-
             <div class="form-group">
-
-                <label for="firstName">
-                    First Name
-                </label>
+                <label for="firstName">First Name</label>
 
                 <input type="text"
                        id="firstName"
@@ -50,17 +47,11 @@
                    th:if="${#fields.hasErrors('firstName')}"
                    th:errors="*{firstName}">
                 </p>
-
             </div>
 
-
             <!-- Last Name -->
-
             <div class="form-group">
-
-                <label for="lastName">
-                    Last Name
-                </label>
+                <label for="lastName">Last Name</label>
 
                 <input type="text"
                        id="lastName"
@@ -72,17 +63,11 @@
                    th:if="${#fields.hasErrors('lastName')}"
                    th:errors="*{lastName}">
                 </p>
-
             </div>
 
-
             <!-- Email -->
-
             <div class="form-group">
-
-                <label for="email">
-                    Email
-                </label>
+                <label for="email">Email</label>
 
                 <input type="email"
                        id="email"
@@ -94,17 +79,11 @@
                    th:if="${#fields.hasErrors('email')}"
                    th:errors="*{email}">
                 </p>
-
             </div>
 
-
-            <!-- Phone -->
-
+            <!-- Phone Number -->
             <div class="form-group">
-
-                <label for="phoneNumber">
-                    Phone Number
-                </label>
+                <label for="phoneNumber">Phone Number</label>
 
                 <input type="text"
                        id="phoneNumber"
@@ -116,62 +95,44 @@
                    th:if="${#fields.hasErrors('phoneNumber')}"
                    th:errors="*{phoneNumber}">
                 </p>
-
             </div>
 
-
             <!-- Address -->
-
             <div class="form-group">
-
-                <label for="address">
-                    Address
-                </label>
+                <label for="address">Address</label>
 
                 <textarea id="address"
                           th:field="*{address}"
                           placeholder="Enter your address"
                           rows="3"></textarea>
-
             </div>
 
-
             <!-- Password -->
-
             <div class="form-group">
-
-                <label for="password">
-                    Password
-                </label>
+                <label for="password">Password</label>
 
                 <input type="password"
                        id="password"
                        th:field="*{password}"
                        placeholder="Create a password"
                        required>
-
             </div>
 
-
-            <!-- Register -->
-
-            <button type="submit"
-                    class="btn primary full-width">
+            <!-- Register Button -->
+            <button type="submit" class="btn primary full-width">
                 Register
             </button>
 
+            <!-- Login Link -->
+            <div class="register-link">
+                <p>Already have an account?</p>
+
+                <a th:href="@{/login}">
+                    Back to Login
+                </a>
+            </div>
+
         </form>
-
-
-        <div class="register-link">
-
-            <p>Already have an account?</p>
-
-            <a th:href="@{/login}">
-                Back to Login
-            </a>
-
-        </div>
 
     </div>
 
@@ -179,3 +140,4 @@
 
 </body>
 </html>
+```

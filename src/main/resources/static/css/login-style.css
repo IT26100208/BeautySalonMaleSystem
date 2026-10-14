@@ -230,6 +230,48 @@ body {
     color: #fff1d5;
     text-decoration: underline;
 }
+/* Registration page adjustments */
+.register-box {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Keep the scrollbar subtle */
+.register-box::-webkit-scrollbar {
+    width: 5px;
+}
+
+.register-box::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+/* Make the registration form more compact */
+.register-box .form-group {
+    margin-bottom: 12px;
+}
+
+.register-box input,
+.register-box textarea {
+    width: 100%;
+}
+
+.register-box textarea {
+    resize: vertical;
+    min-height: 65px;
+}
+
+.register-box .register-link {
+    margin-top: 18px;
+}
+
+.validation-error {
+    color: #ffb4b4;
+    font-size: 12px;
+    margin-top: 5px;
+}
 
 @media (max-width: 520px) {
     .login-container {
