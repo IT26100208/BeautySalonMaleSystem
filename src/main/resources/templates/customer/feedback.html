@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http:www.thymeleaf.org">
+<head>
+    <title>Submit Feedback</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="feedback-container">
+        <h2>We Value Your Feedback</h2>
+        <form th:action="@{/customer/feedback}" th:object="${feedback}" method="post">
+            <label for="rating">Rating (1 to 5)</label>
+            <select th:field="*{rating}" id="rating" required>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Very Good</option>
+                <option value="3">3 - Average</option>
+                <option value="2">2 - Poor</option>
+                <option value="1">1 - Terr</option>
+            </select>
+
+            <textarea th:field="*{comment}" placeholder="Write your comments here..." required></textarea>
+
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+</body>
+</html>
