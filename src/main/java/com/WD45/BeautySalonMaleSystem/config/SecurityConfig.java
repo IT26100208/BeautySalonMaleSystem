@@ -167,6 +167,13 @@ public class SecurityConfig {
                         )
                         .hasRole("CUSTOMER")
 
+                        //SETTINGS
+                        .requestMatchers("/settings/**").authenticated()
+
+                        //FEEDBACK
+                        .requestMatchers("/customer/feedback/**").hasAnyRole("CUSTOMER", "ADMIN")
+                        .requestMatchers("/admin/feedback/**").hasRole("ADMIN")
+
                         // EVERYTHING ELSE
                         .anyRequest()
                         .authenticated()
