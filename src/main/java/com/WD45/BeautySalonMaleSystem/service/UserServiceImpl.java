@@ -428,7 +428,7 @@ public class UserServiceImpl implements UserService {
     public void updateProfile(String username, ProfileUpdateDTO profileDTO) {
         User user = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException("User not found: " + username));
         user.setFullName(profileDTO.getFullName());
-        user.setPhone(profileDTO.getPhone());
+        user.setPhoneNumber(profileDTO.getPhone());
         userRepository.save(user);
     }
 
@@ -444,7 +444,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
-        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword());
+        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
         userRepository.save(user);
         return true;
     }
