@@ -1,5 +1,7 @@
 package com.WD45.BeautySalonMaleSystem.service;
 
+import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.PasswordChangeDTO;
+import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.ProfileUpdateDTO;
 import com.WD45.BeautySalonMaleSystem.dto.AdminDTO;
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
@@ -420,5 +422,30 @@ public class UserServiceImpl implements UserService {
         );
 
 
+    }
+
+    @Override
+    public void updateProfile(String username, ProfileUpdateDTO profileDTO) {
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        user.setFullName(profileDTO.getFullName());
+        user.setPhone(profileDTO.getPhone());
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean updatePassword(String username, PasswordChangeDTO passwordDTO) {
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+
+        if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())){
+            return false;
+        }
+
+        if (!passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
+            return false;
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword());
+        userRepository.save(user);
+        return true;
     }
 }
