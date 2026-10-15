@@ -21,6 +21,9 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private String fullName;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -57,6 +60,12 @@ public class User {
         this.lastName = lastName;
     }
 
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -79,11 +88,6 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-
-    public String getFullName() {
-        return firstName + " " + lastName;
     }
 
     public String getUserType() {
