@@ -1,11 +1,19 @@
 package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.entity;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "feedbacks")
 public class Feedback {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String customerEmail;
     private String customerName;
+
+    @Column(length = 1000)
     private String comment;
     private int rating;
     private LocalDateTime createdAt;

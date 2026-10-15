@@ -3,6 +3,7 @@ package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.service;
 import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.FeedbackDTO;
 import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.entity.Feedback;
 import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.repository.FeedbackRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         this.feedbackRepository = feedbackRepository;
     }
 
+    @Service
     public void submitFeedback(FeedbackDTO feedbackDTO, String userEmail) {
         Feedback feedback = new Feedback();
         feedback.setCustomerEmail(userEmail);
