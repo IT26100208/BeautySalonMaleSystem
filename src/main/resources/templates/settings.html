@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Account Settings</title>
+    <link rel="stylesheet" th:href="@{/css/style.css">
+</head>
+<body>
+    <div class="settings-container">
+        <h2>Account Information</h2>
+
+        <form th:action="@{/settings/profile}" th:object="${profile}" method="post">
+            <h3>Profile Information</h3>
+            <input type="text" th:field="*{fullName}" placeholder="Full Name" required>
+            <input type="email" th:field="*{email}" placeholder="Email" required>
+            <input type="text" th:field="*{phone}" placeholder="Phone Number" required>
+            <button type="submit">Update Profile</button>
+        </form>
+
+        <hr/>
+
+        <form th:action="@{/setings/password}" th:object="${passwordDTO}" method="post">
+            <h3>Change Password</h3>
+            <input type="password" th:field="*{currentPassword}" placeholder="Current Password" required>
+            <input type="password" th:field="*{newPassword}" placeholder="New Password" required>
+            <input type="password" th:field="*{confirmPassword}" placeholder="Confirm New Password" required>
+            <button type="submit">Change Password</button>
+        </form>
+    </div>
+</body>
+</html>
