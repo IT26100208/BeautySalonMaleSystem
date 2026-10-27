@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/login-style.css}">
+    <link rel="stylesheet" th:href="@{/css/cursor.css}">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-box" id="loginBox">
+
+        <div class="brand">
+            <div class="brand-icon">&#9986;</div>
+            <h1>Bella Aura</h1>
+            <h2>Management System</h2>
+        </div>
+
+        <div th:if="${param.registered}" class="alert success">
+            Registration successful. Please login to continue.
+        </div>
+        <div th:if="${param.error}" class="alert error">
+            Invalid email or password.
+        </div>
+        <div th:if="${param.logout}" class="alert success">
+            You have been logged out successfully.
+        </div>
+
+        <form th:action="@{/login}" method="post" id="loginForm" novalidate>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrap">
+                    <span class="input-icon">&#9993;</span>
+                    <input type="email" id="email" name="email"
+                           placeholder="Enter your email" autocomplete="email" required>
+                </div>
+                <small class="field-error" id="emailError"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <span class="input-icon">&#128274;</span>
+                    <input type="password" id="password" name="password"
+                           placeholder="Enter your password" autocomplete="current-password" required>
+                    <button type="button" class="toggle-pass" id="togglePass"
+                            aria-label="Show password">Show</button>
+                </div>
+                <small class="field-error" id="passError"></small>
+            </div>
+
+            <button type="submit" class="btn primary full-width" id="loginBtn">
+                <span class="btn-text" data-loading="Signing in...">Login</span>
+                <span class="spinner" aria-hidden="true"></span>
+            </button>
+
+            <div class="register-link">
+                <p>Don't have an account?</p>
+                <a th:href="@{/register}">Create a Customer Account</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const box = document.getElementById('loginBox');
+    const form = document.getElementById('loginForm');
+    const email = document.getElementById('email');
+    const pass = document.getElementById('password');
+    const btn = document.getElementById('loginBtn');
+
+    // Soft glow that follows the cursor across the card
+    box.addEventListener('pointermove', e => {
+        const r = box.getBoundingClientRect();
+        box.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        box.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+
+    // Show / hide password
+    document.getElementById('togglePass').addEventListener('click', function () {
+        const show = pass.type === 'password';
+        pass.type = show ? 'text' : 'password';
+        this.textContent = show ? 'Hide' : 'Show';
+        this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+
+    // Inline validation
+    function check(input, errId, message) {
+        const err = document.getElementById(errId);
+        const ok = input.checkValidity() && input.value.trim() !== '';
+        input.parentElement.classList.toggle('invalid', !ok);
+        err.textContent = ok ? '' : message;
+        return ok;
+    }
+    const checkEmail = () => check(email, 'emailError', 'Enter a valid email address.');
+    const checkPass = () => check(pass, 'passError', 'Enter your password.');
+
+    email.addEventListener('blur', checkEmail);
+    pass.addEventListener('blur', checkPass);
+    email.addEventListener('input', () => email.parentElement.classList.contains('invalid') && checkEmail());
+    pass.addEventListener('input', () => pass.parentElement.classList.contains('invalid') && checkPass());
+
+    form.addEventListener('submit', e => {
+        const a = checkEmail(), b = checkPass();
+        if (!(a && b)) {
+            e.preventDefault();
+            box.classList.remove('shake');
+            void box.offsetWidth;
+            box.classList.add('shake');
+            return;
+        }
+        btn.classList.add('loading');
+        btn.disabled = true;
+    });
+</script>
+<script th:src="@{/js/cursor.js}"></script>
+</body>
+</html>
