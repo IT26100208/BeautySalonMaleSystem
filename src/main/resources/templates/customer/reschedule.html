@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reschedule Appointment - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/appointments.css}">
+</head>
+<body>
+
+<header th:replace="~{appointment/fragments :: customerNav('list')}"></header>
+
+<main class="page narrow">
+
+    <div class="page-head">
+        <div>
+            <p class="eyebrow" th:text="'Booking #' + ${appointment.id}">Booking #1</p>
+            <h1>Reschedule Appointment</h1>
+        </div>
+        <a class="btn ghost" th:href="@{/appointments}">Back</a>
+    </div>
+
+    <div th:replace="~{appointment/fragments :: alerts}"></div>
+
+    <div class="panel current">
+        <h2>Current booking</h2>
+        <dl class="inline-dl">
+            <dt>Service</dt>
+            <dd th:text="${appointment.serviceName} + ' (' + ${appointment.typeLabel} + ')'">Haircut (Regular)</dd>
+            <dt>When</dt>
+            <dd th:text="${#temporals.format(appointment.appointmentDate, 'EEE, dd MMM yyyy')} + ' at ' + ${appointment.appointmentTime}">Wed, 14 Oct 2026 at 10:00</dd>
+            <dt>Stylist</dt>
+            <dd th:text="${appointment.stylist}">Kasun</dd>
+            <dt>Duration</dt>
+            <dd th:text="${appointment.durationMinutes} + ' min'">30 min</dd>
+        </dl>
+    </div>
+
+    <form th:action="@{/appointments/{id}/reschedule(id=${appointment.id})}" th:object="${form}" method="post" class="panel">
+        <h2>New date and time</h2>
+
+        <div class="field-row three">
+            <div class="form-group">
+                <label for="appointmentDate">Date</label>
+                <input type="date" id="appointmentDate" th:field="*{appointmentDate}"
+                       th:min="${minDate}" th:max="${maxDate}" required>
+                <p class="validation-error" th:if="${#fields.hasErrors('appointmentDate')}" th:errors="*{appointmentDate}"></p>
+            </div>
+            <div class="form-group">
+                <label for="appointmentTime">Time</label>
+                <select id="appointmentTime" th:field="*{appointmentTime}" required>
+                    <option value="">Select time</option>
+                    <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}">09:00</option>
+                </select>
+                <p class="validation-error" th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}"></p>
+            </div>
+            <div class="form-group">
+                <label for="stylist">Stylist</label>
+                <select id="stylist" th:field="*{stylist}" required>
+                    <option th:each="st : ${stylists}" th:value="${st}" th:text="${st}">Kasun</option>
+                </select>
+                <p class="validation-error" th:if="${#fields.hasErrors('stylist')}" th:errors="*{stylist}"></p>
+            </div>
+        </div>
+
+        <p class="hint">
+            After rescheduling, the booking goes back to <b>Pending</b> until the salon confirms it.
+            <span th:text="${appointment.typeLabel} + ' bookings can be moved up to ' + ${appointment.rescheduleCutoffHours} + ' hours before the start time.'"></span>
+        </p>
+
+        <div class="form-actions">
+            <a class="btn ghost" th:href="@{/appointments}">Keep current time</a>
+            <button type="submit" class="btn primary">Save new time</button>
+        </div>
+    </form>
+</main>
+
+</body>
+</html>
