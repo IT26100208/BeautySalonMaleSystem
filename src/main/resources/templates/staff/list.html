@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/staff.css}">
+</head>
+<body>
+
+<!-- =====================================================
+     RIGHT SIDEBAR (UNIFIED ADMIN NAVIGATION)
+===================================================== -->
+<aside class="sidebar">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <div class="logo-icon">
+            ✂
+        </div>
+        <h2>Bella Aura</h2>
+        <span>Management System</span>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div class="nav-title">
+        Main Menu
+    </div>
+
+    <ul class="nav-menu">
+        <li>
+            <a th:href="@{/dashboard}">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/admin/staff}" class="active">
+                <span class="nav-icon">✂</span>
+                Staff Management
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/dashboard#users}">
+                <span class="nav-icon">👥</span>
+                Users
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/dashboard#customers}">
+                <span class="nav-icon">♙</span>
+                Customers
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/dashboard#appointments}">
+                <span class="nav-icon">◷</span>
+                Appointments
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/dashboard#services}">
+                <span class="nav-icon">✦</span>
+                Services
+            </a>
+        </li>
+
+        <div class="nav-title">
+            Account
+        </div>
+
+        <li>
+            <a th:href="@{/dashboard#settings}">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </a>
+        </li>
+    </ul>
+
+    <!-- SIDEBAR BOTTOM PROFILE -->
+    <div class="sidebar-bottom">
+        <div class="admin-profile">
+            <div class="avatar">
+                A
+            </div>
+            <div class="admin-info">
+                <strong>Administrator</strong>
+                <span>System Admin</span>
+            </div>
+        </div>
+    </div>
+
+</aside>
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+<main class="main">
+
+    <!-- TOP HEADER -->
+    <div class="top-header">
+        <div class="welcome">
+            <h1>Staff Management ✂</h1>
+            <p>Manage your salon employees, job positions, and salary records.</p>
+        </div>
+
+        <div class="header-actions">
+            <a th:href="@{/admin/staff/new}" class="btn primary">
+                <span>+</span> Add New Staff
+            </a>
+
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <input type="hidden"
+                       th:if="${_csrf != null}"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+                <button type="submit" class="btn logout">
+                    ↪ Logout
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div th:if="${message}" class="alert success">
+        <span>✓</span>
+        <span th:text="${message}">Staff record processed successfully!</span>
+    </div>
+
+    <div th:if="${error}" class="alert error">
+        <span>⚠</span>
+        <span th:text="${error}">An error occurred.</span>
+    </div>
+
+    <!-- =================================================
+         STATISTICS CARDS
+    ================================================= -->
+    <div class="stats">
+        <div class="stat-card glass">
+            <div class="stat-icon">👥</div>
+            <span>Total Staff</span>
+            <h2 th:text="${staffList.size()}">0</h2>
+        </div>
+
+        <div class="stat-card glass">
+            <div class="stat-icon">✓</div>
+            <span>Active Staff</span>
+            <h2 th:text="${staffList.?[status == 'ACTIVE'].size()}">0</h2>
+        </div>
+
+        <div class="stat-card glass">
+            <div class="stat-icon">⊘</div>
+            <span>Inactive Staff</span>
+            <h2 th:text="${staffList.?[status == 'INACTIVE'].size()}">0</h2>
+        </div>
+    </div>
+
+    <!-- =================================================
+         STAFF DIRECTORY TABLE
+    ================================================= -->
+    <div class="table-card glass">
+
+        <div class="card-header">
+            <div>
+                <h2>Staff Directory</h2>
+                <p>Overview of all registered staff members, positions, and contact details</p>
+            </div>
+
+            <div class="staff-count">
+                <strong th:text="${staffList.size()}">0</strong> Staff Members
+            </div>
+        </div>
+
+        <!-- TOOLBAR & SEARCH -->
+        <div class="toolbar">
+            <form th:action="@{/admin/staff/search}" method="get" class="search-form">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text"
+                           name="name"
+                           placeholder="Search staff by name..."
+                           aria-label="Search staff by name"
+                           required>
+                </div>
+                <button type="submit" class="btn secondary">
+                    Search
+                </button>
+            </form>
+
+            <a th:href="@{/admin/staff}" class="btn secondary">
+                Show All Staff
+            </a>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Staff Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Position</th>
+                    <th>Monthly Salary</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <!-- STAFF ROWS -->
+                <tr th:each="staff : ${staffList}">
+                    <td>
+                        <strong style="color: rgba(255,255,255,0.6);" th:text="${'#' + staff.staffId}">#1</strong>
+                    </td>
+
+                    <td>
+                        <div class="staff-name" th:text="${staff.name}">
+                            John Doe
+                        </div>
+                    </td>
+
+                    <td th:text="${staff.email != null && !staff.email.isEmpty() ? staff.email : '-'}">
+                        john@salon.com
+                    </td>
+
+                    <td th:text="${staff.phone != null && !staff.phone.isEmpty() ? staff.phone : '-'}">
+                        0771234567
+                    </td>
+
+                    <td>
+                        <span class="badge position"
+                              th:text="${staff.position != null && !staff.position.isEmpty() ? staff.position : 'General'}">
+                            Barber
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="salary-tag"
+                              th:if="${staff.salary != null}"
+                              th:text="${'Rs. ' + #numbers.formatDecimal(staff.salary, 1, 'COMMA', 2, 'POINT')}">
+                            Rs. 50,000.00
+                        </span>
+                        <span th:if="${staff.salary == null}" style="color: rgba(255,255,255,0.4);">-</span>
+                    </td>
+
+                    <td>
+                        <span class="badge"
+                              th:classappend="${staff.status == 'ACTIVE' ? 'active' : 'inactive'}"
+                              th:text="${staff.status != null ? staff.status : 'INACTIVE'}">
+                            ACTIVE
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="table-actions">
+                            <!-- EDIT -->
+                            <a class="btn edit"
+                               th:href="@{/admin/staff/edit/{id}(id=${staff.staffId})}">
+                                ✎ Edit
+                            </a>
+
+                            <!-- DELETE -->
+                            <form th:action="@{/admin/staff/delete/{id}(id=${staff.staffId})}"
+                                  method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this staff member?');">
+                                <input type="hidden"
+                                       th:if="${_csrf != null}"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}">
+                                <button type="submit" class="btn delete">
+                                    🗑 Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- EMPTY STATE -->
+                <tr th:if="${#lists.isEmpty(staffList)}">
+                    <td colspan="8" class="empty-message">
+                        No staff members found matching your query.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer">
+            Real-time staff records synchronized with Bella Aura Salon database.
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
