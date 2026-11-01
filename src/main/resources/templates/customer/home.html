@@ -64,7 +64,7 @@
 
             position: fixed;
 
-            right: 20px;
+            left: 20px;
 
             top: 20px;
 
@@ -372,7 +372,7 @@
 
         .main {
 
-            margin-right: 285px;
+            margin-left: 285px;
 
             min-height: 100vh;
 
@@ -656,7 +656,7 @@
 
             .main {
 
-                margin-right: 230px;
+                margin-left: 230px;
 
                 padding: 25px;
             }
@@ -706,7 +706,7 @@
 
             .main {
 
-                margin-right: 0;
+                margin-left: 0;
 
                 padding: 20px 15px;
             }
@@ -825,7 +825,7 @@
 
         <li>
 
-            <a href="#appointments">
+            <a th:href="@{/appointments}">
 
                 <span class="nav-icon">
                     ◷
@@ -840,7 +840,7 @@
 
         <li>
 
-            <a href="#services">
+            <a th:href="@{/appointments/book}">
 
                 <span class="nav-icon">
                     ✦
@@ -865,7 +865,7 @@
 
         <li>
 
-            <a href="#loyalty">
+            <a th:href="@{/customer/loyalty}">
 
                 <span class="nav-icon">
                     ♡
@@ -881,51 +881,19 @@
     </ul>
 
 
-    <!-- ACCOUNT -->
-
-    <div class="nav-title">
-        Account
-    </div>
-
-
-    <ul class="nav-menu">
-
-        <li>
-
-            <a href="#settings">
-
-                <span class="nav-icon">
-                    ⚙
-                </span>
-
-                Settings
-
-            </a>
-
-        </li>
-
-    </ul>
-
-
     <!-- CUSTOMER PROFILE -->
 
     <div class="sidebar-bottom">
 
         <div class="customer-profile">
 
-            <div class="avatar">
-                C
-            </div>
+            <div class="avatar" th:text="${#strings.substring(customer.firstName, 0, 1)}">C</div>
 
             <div class="customer-info">
 
-                <strong>
-                    Customer
-                </strong>
+                <strong th:text="${customer.firstName + ' ' + customer.lastName}">Customer</strong>
 
-                <span>
-                    Member
-                </span>
+                <span>Customer account</span>
 
             </div>
 

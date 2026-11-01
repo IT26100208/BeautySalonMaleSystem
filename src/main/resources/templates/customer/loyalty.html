@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyalty - Bella Aura</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 32px 18px;
+            color: #fff;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(rgba(15, 10, 20, .72), rgba(15, 10, 20, .78)), url("/images/bg3.jpg") center / cover fixed;
+        }
+        main { width: min(100%, 900px); margin: 0 auto; }
+        a { color: #f3c7ed; }
+        .top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+        .card, .table-wrap { border: 1px solid rgba(255,255,255,.2); border-radius: 20px; background: rgba(255,255,255,.12); backdrop-filter: blur(18px); }
+        .card { padding: 28px; margin-bottom: 24px; }
+        .eyebrow { color: #f0b9e8; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        h1, h2 { margin-top: 0; }
+        .points { margin: 10px 0; font-size: 54px; font-weight: 700; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.14); }
+        th { color: #f0d7ee; font-size: 12px; }
+        .empty { padding: 24px; color: rgba(255,255,255,.75); }
+        .positive { color: #a7edbc; }
+        .negative { color: #ffb2c1; }
+        @media (max-width: 520px) {
+            .top { flex-direction: column; }
+            .card { padding: 22px; }
+            .points { font-size: 44px; }
+            th, td { padding: 11px 9px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <nav class="top">
+        <a th:href="@{/customer}">← Customer home</a>
+        <a th:href="@{/customer/profile}">My profile →</a>
+    </nav>
+    <section class="card">
+        <p class="eyebrow">Bella Aura rewards</p>
+        <h1 th:text="|Hello, ${customer.firstName}|">Your loyalty</h1>
+        <p>Your loyalty number: <strong th:text="${customer.loyaltyNumber}">CUS000</strong></p>
+        <p class="points" th:text="${pointsBalance}">0</p>
+        <p>Points balance</p>
+    </section>
+    <section>
+        <h2>Points history</h2>
+        <div class="table-wrap">
+            <table th:if="${!#lists.isEmpty(loyaltyHistory)}">
+                <thead><tr><th>Date</th><th>Activity</th><th>Points</th></tr></thead>
+                <tbody>
+                <tr th:each="transaction : ${loyaltyHistory}">
+                    <td th:text="${transaction.createdAtDisplay}">01 Nov 2026 10:00</td>
+                    <td th:text="${transaction.description}">Appointment reward</td>
+                    <td th:class="${transaction.points >= 0 ? 'positive' : 'negative'}"
+                        th:text="${transaction.points > 0 ? '+' + transaction.points : transaction.points}">+10</td>
+                </tr>
+                </tbody>
+            </table>
+            <p class="empty" th:if="${#lists.isEmpty(loyaltyHistory)}">No loyalty points activity yet.</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>
