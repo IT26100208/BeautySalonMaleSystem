@@ -1,5 +1,6 @@
 package com.WD45.BeautySalonMaleSystem.service;
 
+import com.WD45.BeautySalonMaleSystem.dto.AdminDTO;
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
@@ -341,8 +342,7 @@ public class UserServiceImpl implements UserService {
             Admin admin =
                     (Admin) user;
 
-            AdminDTO dto =
-                    new AdminDTO();
+            AdminDTO dto = new AdminDTO();
 
 
             setCommonDTOFields(
