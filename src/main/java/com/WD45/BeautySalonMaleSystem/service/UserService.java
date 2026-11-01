@@ -1,8 +1,7 @@
 package com.WD45.BeautySalonMaleSystem.service;
 
 
-import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
-import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
+import com.WD45.BeautySalonMaleSystem.dto.*;
 
 import java.util.List;
 
@@ -25,4 +24,12 @@ public interface UserService {
 
     // CUSTOMER REGISTRATION
     UserDTO registerCustomer(UserFormDTO user);
+
+    CustomerDTO getCurrentCustomerProfile();
+
+    void updateCurrentCustomerProfile(UserFormDTO userFormDTO);
+
+    void updateProfile(String email, ProfileUpdateDTO profileUpdateDTO);
+
+    boolean updatePassword(String email, PasswordChangeDTO passwordChangeDTO);
 }
