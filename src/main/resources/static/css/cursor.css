@@ -1,0 +1,31 @@
+/* Bella Aura - scissors cursor with trail (shared: login, register, dashboard) */
+body.has-scissors,
+body.has-scissors * { cursor: none !important; }
+
+/* keep the normal text caret inside form fields so typing feels natural */
+body.has-scissors input,
+body.has-scissors textarea { cursor: text !important; }
+
+.scissors-cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 44px;
+    height: 40px;
+    pointer-events: none;
+    z-index: 99999;
+    transform-origin: 41px 20px;   /* the blade tip is the real pointer position */
+    filter: drop-shadow(0 0 6px rgba(236, 72, 153, .75));
+    transition: opacity .15s ease;
+    will-change: transform;
+}
+.scissors-cursor.is-hidden { opacity: 0; }
+
+.cursor-trail {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 99998;
+}

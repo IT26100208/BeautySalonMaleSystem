@@ -1,7 +1,6 @@
 package com.WD45.BeautySalonMaleSystem.service;
 
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.PasswordChangeDTO;
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.ProfileUpdateDTO;
+
 import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
 
@@ -26,8 +25,4 @@ public interface UserService {
 
     // CUSTOMER REGISTRATION
     UserDTO registerCustomer(UserFormDTO user);
-
-    void updateProfile(String username, ProfileUpdateDTO profileDTO);
-    boolean updatePassword(String username, PasswordChangeDTO passwordDTO);
 }
-

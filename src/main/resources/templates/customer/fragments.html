@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Customer navigation bar -->
+<header class="topbar" th:fragment="customerNav(active)">
+    <a class="brand" th:href="@{/appointments}">
+        <span class="brand-mark">BA</span>
+        <span>Bella Aura <small>Appointments</small></span>
+    </a>
+    <nav class="nav-links">
+        <a th:href="@{/appointments}" th:classappend="${active == 'list'} ? 'active'">My Appointments</a>
+        <a th:href="@{/appointments/book}" th:classappend="${active == 'book'} ? 'active'">Book</a>
+        <form th:action="@{/logout}" method="post" class="inline-form">
+            <button type="submit" class="link-button">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<!-- Admin navigation bar -->
+<header class="topbar admin" th:fragment="adminNav(active)">
+    <a class="brand" th:href="@{/admin/appointments}">
+        <span class="brand-mark">BA</span>
+        <span>Bella Aura <small>Admin · Appointments</small></span>
+    </a>
+    <nav class="nav-links">
+        <a th:href="@{/admin/appointments}" th:classappend="${active == 'all'} ? 'active'">All Appointments</a>
+        <a th:href="@{/admin/appointments/file}" th:classappend="${active == 'file'} ? 'active'">File Records</a>
+        <form th:action="@{/logout}" method="post" class="inline-form">
+            <button type="submit" class="link-button">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<!-- Flash / error messages -->
+<div th:fragment="alerts">
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+</div>
+
+</body>
+</html>

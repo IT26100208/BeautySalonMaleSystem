@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Appointments - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/appointments.css}">
+</head>
+<body>
+
+<header th:replace="~{appointment/fragments :: adminNav('all')}"></header>
+
+<main class="page wide">
+
+    <div class="page-head">
+        <div>
+            <p class="eyebrow">Admin</p>
+            <h1>Appointment Management</h1>
+        </div>
+    </div>
+
+    <div th:replace="~{appointment/fragments :: alerts}"></div>
+
+    <!-- Status counts -->
+    <div class="stats">
+        <a class="stat" th:each="s : ${statuses}"
+           th:href="@{/admin/appointments(status=${s})}"
+           th:classappend="${selectedStatus == s} ? 'selected'">
+            <span class="badge" th:classappend="${s.cssClass}" th:text="${s.label}">Pending</span>
+            <strong th:text="${counts.get(s)}">0</strong>
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <form class="filters" th:action="@{/admin/appointments}" method="get">
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">All statuses</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"
+                        th:selected="${selectedStatus == s}">Pending</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" th:value="${selectedDate}">
+        </div>
+        <button type="submit" class="btn primary">Filter</button>
+        <a class="btn ghost" th:href="@{/admin/appointments}">Clear</a>
+    </form>
+
+    <div class="empty" th:if="${#lists.isEmpty(appointments)}">
+        <h2>No appointments found</h2>
+        <p>Try a different filter.</p>
+    </div>
+
+    <div class="table-wrap" th:unless="${#lists.isEmpty(appointments)}">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Service</th>
+                <th>Date &amp; time</th>
+                <th>Stylist</th>
+                <th class="num">Price (LKR)</th>
+                <th>Status</th>
+                <th>Change status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${appointments}">
+                <td th:text="${a.id}">1</td>
+                <td>
+                    <b th:text="${a.customerName}">Name</b>
+                    <div class="sub" th:text="${a.phoneNumber}">0771234567</div>
+                    <div class="sub" th:text="${a.customerEmail}">email</div>
+                </td>
+                <td>
+                    <span th:text="${a.serviceName}">Haircut</span>
+                    <div class="sub">
+                        <span class="badge type" th:classappend="${a.typeLabel == 'Premium'} ? 'premium'"
+                              th:text="${a.typeLabel}">Regular</span>
+                    </div>
+                    <div class="sub note" th:if="${a.notes}" th:text="${a.notes}">notes</div>
+                </td>
+                <td>
+                    <span th:text="${#temporals.format(a.appointmentDate, 'dd MMM yyyy')}">14 Oct 2026</span>
+                    <div class="sub" th:text="${a.appointmentTime} + ' – ' + ${a.endTime}">10:00 – 10:30</div>
+                </td>
+                <td th:text="${a.stylist}">Kasun</td>
+                <td class="num" th:text="${#numbers.formatDecimal(a.totalPrice, 1, 'COMMA', 2, 'POINT')}">1,500.00</td>
+                <td><span class="badge" th:classappend="${a.status.cssClass}" th:text="${a.status.label}">Pending</span></td>
+                <td>
+                    <form th:unless="${#lists.isEmpty(a.nextStatuses)}"
+                          th:action="@{/admin/appointments/{id}/status(id=${a.id})}" method="post" class="status-form">
+                        <select name="status" aria-label="New status">
+                            <option th:each="n : ${a.nextStatuses}" th:value="${n}" th:text="${n.label}">Confirmed</option>
+                        </select>
+                        <button type="submit" class="btn small primary">Update</button>
+                    </form>
+                    <span class="sub" th:if="${#lists.isEmpty(a.nextStatuses)}">Final</span>
+                </td>
+                <td>
+                    <form th:action="@{/admin/appointments/{id}/delete(id=${a.id})}" method="post"
+                          onsubmit="return confirm('Permanently delete this appointment?');">
+                        <button type="submit" class="btn small danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

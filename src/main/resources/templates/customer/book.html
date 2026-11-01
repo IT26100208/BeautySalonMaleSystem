@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/appointments.css}">
+</head>
+<body>
+
+<header th:replace="~{appointment/fragments :: customerNav('book')}"></header>
+
+<main class="page">
+
+    <div class="page-head">
+        <div>
+            <p class="eyebrow">New booking</p>
+            <h1>Book an Appointment</h1>
+        </div>
+        <a class="btn ghost" th:href="@{/appointments}">Back to my appointments</a>
+    </div>
+
+    <div th:replace="~{appointment/fragments :: alerts}"></div>
+
+    <form th:action="@{/appointments/book}" th:object="${form}" method="post" class="booking-layout" id="bookingForm">
+
+        <div class="panel">
+
+            <!-- 1. Service -->
+            <section class="form-section">
+                <h2><span class="step">1</span> Choose a service</h2>
+                <div class="option-grid">
+                    <label class="option-card" th:each="s : ${services}">
+                        <input type="radio" th:field="*{serviceType}" th:value="${s}"
+                               th:attr="data-price=${s.basePrice},data-minutes=${s.durationMinutes},data-name=${s.displayName}">
+                        <span class="option-body">
+                            <span class="option-title" th:text="${s.displayName}">Haircut</span>
+                            <span class="option-meta">
+                                <span th:text="'LKR ' + ${#numbers.formatDecimal(s.basePrice, 1, 'COMMA', 0, 'POINT')}">LKR 1,500</span>
+                                · <span th:text="${s.durationMinutes} + ' min'">30 min</span>
+                            </span>
+                        </span>
+                    </label>
+                </div>
+                <p class="validation-error" th:if="${#fields.hasErrors('serviceType')}" th:errors="*{serviceType}"></p>
+            </section>
+
+            <!-- 2. Package -->
+            <section class="form-section">
+                <h2><span class="step">2</span> Choose a package</h2>
+                <div class="option-grid two">
+                    <label class="option-card" th:each="t : ${types}">
+                        <input type="radio" th:field="*{appointmentType}" th:value="${t}"
+                               th:attr="data-type=${t.name()}">
+                        <span class="option-body">
+                            <span class="option-title" th:text="${t.label}">Regular</span>
+                            <span class="option-meta" th:text="${t.description}">Description</span>
+                        </span>
+                    </label>
+                </div>
+                <p class="validation-error" th:if="${#fields.hasErrors('appointmentType')}" th:errors="*{appointmentType}"></p>
+            </section>
+
+            <!-- 3. Date, time, stylist -->
+            <section class="form-section">
+                <h2><span class="step">3</span> Pick a date, time and stylist</h2>
+                <div class="field-row three">
+                    <div class="form-group">
+                        <label for="appointmentDate">Date</label>
+                        <input type="date" id="appointmentDate" th:field="*{appointmentDate}"
+                               th:min="${minDate}" th:max="${maxDate}" required>
+                        <p class="validation-error" th:if="${#fields.hasErrors('appointmentDate')}" th:errors="*{appointmentDate}"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Time</label>
+                        <select id="appointmentTime" th:field="*{appointmentTime}" required>
+                            <option value="">Select time</option>
+                            <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}">09:00</option>
+                        </select>
+                        <p class="validation-error" th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="stylist">Stylist</label>
+                        <select id="stylist" th:field="*{stylist}" required>
+                            <option value="">Select stylist</option>
+                            <option th:each="st : ${stylists}" th:value="${st}" th:text="${st}">Kasun</option>
+                        </select>
+                        <p class="validation-error" th:if="${#fields.hasErrors('stylist')}" th:errors="*{stylist}"></p>
+                    </div>
+                </div>
+                <p class="hint">Open daily 09:00 – 19:00. Your service must finish before closing time.</p>
+            </section>
+
+            <!-- 4. Contact -->
+            <section class="form-section">
+                <h2><span class="step">4</span> Your details</h2>
+                <div class="field-row">
+                    <div class="form-group">
+                        <label for="customerName">Full name</label>
+                        <input type="text" id="customerName" th:field="*{customerName}" placeholder="Enter your name" required>
+                        <p class="validation-error" th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone number</label>
+                        <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="0771234567" required>
+                        <p class="validation-error" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes <span class="optional">(optional)</span></label>
+                    <textarea id="notes" th:field="*{notes}" rows="3" placeholder="e.g. Skin fade, keep the top long"></textarea>
+                    <p class="validation-error" th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Summary -->
+        <aside class="panel summary">
+            <h2>Summary</h2>
+            <dl>
+                <dt>Service</dt>
+                <dd id="sumService">—</dd>
+                <dt>Package</dt>
+                <dd id="sumType">—</dd>
+                <dt>Duration</dt>
+                <dd id="sumDuration">—</dd>
+            </dl>
+            <div class="total">
+                <span>Estimated total</span>
+                <strong id="sumPrice">LKR 0</strong>
+            </div>
+            <button type="submit" class="btn primary full-width">Book Appointment</button>
+            <p class="hint">New bookings start as <b>Pending</b> until the salon confirms them.</p>
+        </aside>
+    </form>
+</main>
+
+<script>
+    // Live price preview (the server calculates the real price in the Appointment classes)
+    (function () {
+        const form = document.getElementById('bookingForm');
+        const fmt = n => 'LKR ' + n.toLocaleString('en-LK', {maximumFractionDigits: 2});
+
+        function update() {
+            const service = form.querySelector('input[name="serviceType"]:checked');
+            const type = form.querySelector('input[name="appointmentType"]:checked');
+            const premium = type && type.dataset.type === 'PREMIUM';
+            document.getElementById('sumType').textContent = type ? (premium ? 'Premium' : 'Regular') : '—';
+            if (!service) {
+                return;
+            }
+            const price = parseFloat(service.dataset.price) * (premium ? 1.3 : 1);
+            const minutes = parseInt(service.dataset.minutes, 10) + (premium ? 15 : 0);
+            document.getElementById('sumService').textContent = service.dataset.name;
+            document.getElementById('sumDuration').textContent = minutes + ' min';
+            document.getElementById('sumPrice').textContent = fmt(price);
+        }
+
+        form.addEventListener('change', update);
+        update();
+    })();
+</script>
+
+</body>
+</html>
