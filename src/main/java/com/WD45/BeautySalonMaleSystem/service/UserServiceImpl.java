@@ -2,6 +2,8 @@ package com.WD45.BeautySalonMaleSystem.service;
 
 import com.WD45.BeautySalonMaleSystem.dto.AdminDTO;
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
+import com.WD45.BeautySalonMaleSystem.dto.PasswordChangeDTO;
+import com.WD45.BeautySalonMaleSystem.dto.ProfileUpdateDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
 import com.WD45.BeautySalonMaleSystem.entity.Admin;
@@ -9,6 +11,7 @@ import com.WD45.BeautySalonMaleSystem.entity.Customer;
 import com.WD45.BeautySalonMaleSystem.entity.User;
 import com.WD45.BeautySalonMaleSystem.exception.UserNotFoundException;
 import com.WD45.BeautySalonMaleSystem.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -419,5 +422,44 @@ public class UserServiceImpl implements UserService {
         );
 
 
+    }
+
+    @Override
+    public CustomerDTO getCurrentCustomerProfile() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        // Query userRepository directly instead of calling getUserByEmail
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + currentUsername));
+
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(user.getId());
+        customerDTO.setFirstName(user.getFirstName());
+        customerDTO.setLastName(user.getLastName());
+        customerDTO.setEmail(user.getEmail());
+        customerDTO.setPhoneNumber(user.getPhoneNumber());
+
+        if (user instanceof Customer customer) {
+            customerDTO.setAddress(customer.getAddress());
+            customerDTO.setLoyaltyNumber(customer.getLoyaltyNumber());
+        }
+
+        return customerDTO;
+    }
+
+    @Override
+    public void updateCurrentCustomerProfile(UserFormDTO userFormDTO) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        // Update logic for current customer profile
+    }
+
+    @Override
+    public void updateProfile(String email, ProfileUpdateDTO profileUpdateDTO) {
+        // Logic to update user profile information
+    }
+
+    @Override
+    public boolean updatePassword(String email, PasswordChangeDTO passwordChangeDTO) {
+        // Logic to validate current password and encode/save new password
+        return true;
     }
 }
