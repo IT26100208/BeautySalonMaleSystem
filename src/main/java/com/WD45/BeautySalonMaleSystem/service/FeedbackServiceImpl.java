@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class FeedbackServiceImpl implements FeedbackService {
     private final FeedbackRepository feedbackRepository;
 
@@ -14,7 +15,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         this.feedbackRepository = feedbackRepository;
     }
 
-    @Service
     public void submitFeedback(FeedbackDTO feedbackDTO, String userEmail) {
         Feedback feedback = new Feedback();
         feedback.setCustomerEmail(userEmail);
