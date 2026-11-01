@@ -17,13 +17,13 @@ public class AdminServiceController {
     @GetMapping
     public String listServices(Model model) {
         model.addAttribute("services", salonServiceService.getAllServices());
-        return "admin/services-list";
+        return "admin/services-list"; // Renders src/main/resources/templates/admin/services-list.html
     }
 
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("service", new SalonService());
-        return "admin/service-add";
+        return "admin/service-add"; // Renders src/main/resources/templates/admin/service-add.html
     }
 
     @PostMapping("/save")
@@ -35,7 +35,7 @@ public class AdminServiceController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("service", salonServiceService.getServiceById(id));
-        return "admin/service-edit";
+        return "admin/service-edit"; // Renders src/main/resources/templates/admin/service-edit.html
     }
 
     @PostMapping("/update/{id}")
