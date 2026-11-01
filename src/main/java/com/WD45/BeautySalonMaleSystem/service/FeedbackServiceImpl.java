@@ -1,8 +1,8 @@
-package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.service;
+package com.WD45.BeautySalonMaleSystem.service;
 
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.FeedbackDTO;
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.entity.Feedback;
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.repository.FeedbackRepository;
+import com.WD45.BeautySalonMaleSystem.dto.FeedbackDTO;
+import com.WD45.BeautySalonMaleSystem.entity.Feedback;
+import com.WD45.BeautySalonMaleSystem.repository.FeedbackRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

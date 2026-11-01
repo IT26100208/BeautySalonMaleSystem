@@ -1,7 +1,7 @@
-package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.controller;
+package com.WD45.BeautySalonMaleSystem.controller;
 
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.FeedbackDTO;
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.service.FeedbackService;
+import com.WD45.BeautySalonMaleSystem.dto.FeedbackDTO;
+import com.WD45.BeautySalonMaleSystem.service.FeedbackService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

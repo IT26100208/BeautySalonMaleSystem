@@ -1,4 +1,4 @@
-package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto;
+package com.WD45.BeautySalonMaleSystem.dto;
 
 public class ProfileUpdateDTO {
     private String fullName;

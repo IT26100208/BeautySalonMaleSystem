@@ -1,7 +1,7 @@
 package com.WD45.BeautySalonMaleSystem.controller;
 
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.PasswordChangeDTO;
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.dto.ProfileUpdateDTO;
+import com.WD45.BeautySalonMaleSystem.dto.PasswordChangeDTO;
+import com.WD45.BeautySalonMaleSystem.dto.ProfileUpdateDTO;
 import com.WD45.BeautySalonMaleSystem.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

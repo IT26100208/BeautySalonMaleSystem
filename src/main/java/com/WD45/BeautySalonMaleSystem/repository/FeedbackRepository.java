@@ -1,6 +1,6 @@
-package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.repository;
+package com.WD45.BeautySalonMaleSystem.repository;
 
-import com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.entity.Feedback;
+import com.WD45.BeautySalonMaleSystem.entity.Feedback;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

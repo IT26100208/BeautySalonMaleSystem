@@ -1,4 +1,4 @@
-package com.WD45.BeautySalonMaleSystem.BeautySalonMaleSystem.entity;
+package com.WD45.BeautySalonMaleSystem.entity;
 
 import jakarta.persistence.*;
 
