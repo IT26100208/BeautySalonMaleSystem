@@ -11,7 +11,7 @@
         <form th:action="@{/settings/profile}" th:object="${profile}" method="post">
             <h3>Profile Information</h3>
             <input type="text" th:field="*{fullName}" placeholder="Full Name" required>
-            <input type="email" th:field="*{email}" placeholder="Email" required>
+            <input type="email" th:field="*{email}" placeholder="Email" readonly required>
             <input type="text" th:field="*{phone}" placeholder="Phone Number" required>
             <button type="submit">Update Profile</button>
         </form>

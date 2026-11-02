@@ -453,13 +453,113 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(String email, ProfileUpdateDTO profileUpdateDTO) {
-        // Logic to update user profile information
+    @org.springframework.transaction.annotation.Transactional
+    public void updateProfile(
+            String email,
+            ProfileUpdateDTO profileUpdateDTO) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Account not found."
+                        )
+                );
+
+        String fullName = profileUpdateDTO.getFullName();
+        String phone = profileUpdateDTO.getPhone();
+
+        // Check the submitted values
+        if (fullName == null || fullName.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Full name is required."
+            );
+        }
+
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Phone number is required."
+            );
+        }
+
+        // Email cannot be changed through this form yet
+        if (profileUpdateDTO.getEmail() == null ||
+                !email.equalsIgnoreCase(
+                        profileUpdateDTO.getEmail().trim())) {
+
+            throw new IllegalArgumentException(
+                    "Email changes are not supported here."
+            );
+        }
+
+        // Separate the full name into first and last names
+        String[] names = fullName.trim().split("\\s+", 2);
+
+        if (names.length < 2) {
+            throw new IllegalArgumentException(
+                    "Please enter both first and last name."
+            );
+        }
+
+        // Update the existing user
+        user.setFirstName(names[0]);
+        user.setLastName(names[1]);
+        user.setPhoneNumber(phone.trim());
+
+        // Save the changes to MySQL
+        userRepository.save(user);
     }
 
     @Override
-    public boolean updatePassword(String email, PasswordChangeDTO passwordChangeDTO) {
-        // Logic to validate current password and encode/save new password
+    @org.springframework.transaction.annotation.Transactional
+    public boolean updatePassword(
+            String email,
+            PasswordChangeDTO passwordChangeDTO) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Account not found."
+                        )
+                );
+
+        String current = passwordChangeDTO.getCurrentPassword();
+        String next = passwordChangeDTO.getNewPassword();
+        String confirmation = passwordChangeDTO.getConfirmPassword();
+
+        // Validate submitted passwords
+        if (current == null ||
+                next == null ||
+                confirmation == null) {
+            return false;
+        }
+
+        // Verify the current password
+        if (!passwordEncoder.matches(
+                current, user.getPassword())) {
+            return false;
+        }
+
+        // Require a password with at least 8 characters
+        if (next.length() < 8) {
+            return false;
+        }
+
+        // New password and confirmation must match
+        if (!next.equals(confirmation)) {
+            return false;
+        }
+
+        // Prevent reusing the current password
+        if (passwordEncoder.matches(
+                next, user.getPassword())) {
+            return false;
+        }
+
+        // Hash the new password before saving.
+        user.setPassword(passwordEncoder.encode(next));
+
+        userRepository.save(user);
+
         return true;
     }
 }
