@@ -179,7 +179,11 @@ public class SecurityConfig {
                         )
                         .hasRole("CUSTOMER")
 
-                        //SETTINGS
+                        // SERVICES
+                        .requestMatchers("/services/**")
+                        .permitAll()
+
+                        //PUBLIC BROWSING
                         .requestMatchers(
                                 "/settings",
                                 "/settings/**"

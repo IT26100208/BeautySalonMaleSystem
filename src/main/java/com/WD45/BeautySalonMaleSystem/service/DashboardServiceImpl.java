@@ -93,11 +93,11 @@ public class DashboardServiceImpl implements DashboardService {
 
                     SystemSettings defaultSettings =
                             new SystemSettings(
-                                    "Gentlemen's Salon",
+                                    "Bella Aura",
                                     "09:00",
                                     "20:00",
                                     "+94 11 234 5678",
-                                    "info@gentlemensalon.lk",
+                                    "admin@salon.lk",
                                     "LKR",
                                     5
                             );
