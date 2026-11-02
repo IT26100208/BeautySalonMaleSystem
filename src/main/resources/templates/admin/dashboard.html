@@ -682,7 +682,7 @@
         <div class="stat-card glass">
             <div class="stat-icon">👥</div>
             <span>Total Customers</span>
-            <h2 th:text="${stats != null ? stats.totalCustomers : (users != null ? #lists.size(users) : 0)}">0</h2>
+            <h2 th:text="${stats != null ? stats.totalCustomers : 0}">0</h2>
         </div>
 
         <!-- Active Staff -->
@@ -713,6 +713,29 @@
             <h2 th:text="${stats != null ? stats.pendingAppointments : 0}">0</h2>
         </div>
 
+
+        <!-- Completed Appointments -->
+        <div class="stat-card glass">
+            <div class="stat-icon">✅</div>
+            <span>Completed Appointments</span>
+
+            <h2 th:text="${stats != null
+        ? stats.completedAppointments : 0}">
+                0
+            </h2>
+        </div>
+
+        <!-- Estimated Revenue -->
+        <div class="stat-card glass">
+            <div class="stat-icon">💰</div>
+            <span>Estimated Revenue (LKR)</span>
+
+            <h2 th:text="${stats != null
+        ? #numbers.formatDecimal(stats.totalRevenue, 1, 2)
+        : '0.00'}">
+                0.00
+            </h2>
+        </div>
     </div>
 
     <!-- =================================================
