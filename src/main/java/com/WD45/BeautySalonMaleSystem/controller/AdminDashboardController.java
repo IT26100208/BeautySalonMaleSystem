@@ -75,7 +75,7 @@ public class AdminDashboardController {
                     "Please enter valid user information."
             );
 
-            return "redirect:/dashboard";
+            return "redirect:/admin/dashboard";
         }
 
         try {
@@ -98,7 +98,7 @@ public class AdminDashboardController {
             );
         }
 
-        return "redirect:/dashboard";
+        return "redirect:/admin/dashboard";
     }
 
 
@@ -130,6 +130,6 @@ public class AdminDashboardController {
             );
         }
 
-        return "redirect:/dashboard";
+        return "redirect:/admin/dashboard";
     }
 }

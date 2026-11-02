@@ -40,6 +40,6 @@ public class SettingsController {
         if (!update) {
             return "redirect:/settings?passwordError=true";
         }
-        return "redirect:/setting?passwordSuccess=true";
+        return "redirect:/settings?passwordSuccess=true";
     }
 }

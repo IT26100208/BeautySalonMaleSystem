@@ -58,7 +58,7 @@
 
     <!-- Main Form Glass Container (Replaces the Users Table area) -->
     <main class="glass-card rounded-3xl p-8 flex-1">
-        <form th:action="@{/admin/settings/save}" th:object="${settings}" method="post" class="space-y-6 max-w-3xl">
+        <form th:action="@{/admin/settings}" th:object="${settings}" method="post" class="space-y-6 max-w-3xl">
             <input type="hidden" th:field="*{id}" />
 
             <!-- Salon Name -->
