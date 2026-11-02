@@ -825,7 +825,7 @@
 
         <li>
 
-            <a href="#appointments">
+            <a th:href="@{/appointments}">
 
                 <span class="nav-icon">
                     ◷
@@ -840,7 +840,7 @@
 
         <li>
 
-            <a href="#services">
+            <a th:href="@{/customer/services}">
 
                 <span class="nav-icon">
                     ✦
@@ -865,7 +865,7 @@
 
         <li>
 
-            <a href="#loyalty">
+            <a th:href="@{/customer/profile}">
 
                 <span class="nav-icon">
                     ♡
@@ -892,7 +892,7 @@
 
         <li>
 
-            <a href="#settings">
+            <a th:href="@{/settings}">
 
                 <span class="nav-icon">
                     ⚙
@@ -919,7 +919,7 @@
 
             <div class="customer-info">
 
-                <strong>
+                <strong th:text="${customer.firstName + ' ' + customer.lastName}">
                     Customer
                 </strong>
 
@@ -952,13 +952,48 @@
 
         <div class="welcome">
 
-            <h1>
-                Welcome Back 👋
+            <h1 th:text="|Welcome Back, ${customer.firstName}! 👋|">
+                Welcome Back!
             </h1>
 
-            <p>
-                We're happy to see you again.
-            </p>
+
+            <section class="welcome-card"
+                     style="margin-top: 24px;">
+
+                <h2>My Appointment Summary</h2>
+
+                <p>
+                    Total Appointments:
+                    <strong th:text="${totalAppointments}">0</strong>
+                </p>
+
+                <div style="display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-top: 20px;">
+
+                    <a th:href="@{/appointments/book}"
+                       style="color: white;
+                  padding: 12px 18px;
+                  background: #9b5de5;
+                  border-radius: 10px;
+                  text-decoration: none;">
+                        Book Appointment
+                    </a>
+
+                    <a th:href="@{/appointments}"
+                       style="color: white;
+                  padding: 12px 18px;
+                  border: 1px solid white;
+                  border-radius: 10px;
+                  text-decoration: none;">
+                        View My Appointments
+                    </a>
+
+                </div>
+
+            </section>
+
 
         </div>
 
@@ -1008,4 +1043,7 @@
             view your loyalty information and update your profile.
 
         </p>
-        ```
+    </section>
+</main>
+</body>
+</html>

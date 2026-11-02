@@ -3,9 +3,11 @@ package com.WD45.BeautySalonMaleSystem.controller;
 
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
+import com.WD45.BeautySalonMaleSystem.service.AppointmentService;
 import com.WD45.BeautySalonMaleSystem.service.UserService;
 
 import jakarta.validation.Valid;
+import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,17 +21,44 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CustomerController {
 
     private final UserService userService;
+    private final AppointmentService appointmentService;
 
-    public CustomerController(UserService userService) {
+    public CustomerController(UserService userService,AppointmentService appointmentService) {
         this.userService = userService;
+        this.appointmentService = appointmentService;
     }
 
     // ==========================================
     // CUSTOMER HOME
     // ==========================================
 
+
     @GetMapping("/customer")
-    public String customerHome() {
+    public String customerHome(
+            Principal principal,
+            Model model) {
+
+        // Get logged-in customer's details
+        CustomerDTO customer =
+                userService.getCurrentCustomerProfile();
+
+        // Load only this customer's appointments
+        var appointments =
+                appointmentService.getCustomerAppointments(
+                        principal.getName()
+                );
+
+        // Calculate appointment count
+        long totalAppointments = appointments.size();
+
+        // Send information to the HTML page
+        model.addAttribute("customer", customer);
+
+        model.addAttribute(
+                "totalAppointments",
+                totalAppointments
+        );
+
         return "customer/home";
     }
 
