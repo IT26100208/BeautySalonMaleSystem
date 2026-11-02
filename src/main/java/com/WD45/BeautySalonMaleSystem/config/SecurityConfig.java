@@ -168,9 +168,10 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ADMIN
-                        .requestMatchers(
-                                "/admin/**"
-                        )
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/dashboard/services/**")
                         .hasRole("ADMIN")
 
                         // CUSTOMER
