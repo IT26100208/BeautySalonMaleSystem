@@ -180,6 +180,10 @@ public class SecurityConfig {
                         )
                         .hasRole("CUSTOMER")
 
+                        // Customer appointment management
+                        .requestMatchers("/appointments", "/appointments/**")
+                        .hasRole("CUSTOMER")
+
                         // SERVICES
                         .requestMatchers("/services/**")
                         .permitAll()
