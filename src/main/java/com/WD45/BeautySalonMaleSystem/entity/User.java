@@ -21,7 +21,7 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Transient
     private String fullName;
 
     @Column(nullable = false, unique = true)
@@ -62,6 +62,7 @@ public class User {
 
     public void setFullName(String fullName) { this.fullName = fullName; }
 
+    @Transient
     public String getFullName() {
         return firstName + " " + lastName;
     }
