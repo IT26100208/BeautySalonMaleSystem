@@ -1,0 +1,4 @@
+salonName=Belle Aura
+openingHours=08:00 AM - 08:00 PM
+contactEmail=admin@belleaura.com
+taxRate=0.08

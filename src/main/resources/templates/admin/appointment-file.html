@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment File Records - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/appointments.css}">
+</head>
+<body>
+
+<header th:replace="~{customer/fragments :: adminNav('file')}"></header>
+
+<main class="page wide">
+
+    <div class="page-head">
+        <div>
+            <p class="eyebrow">File handling</p>
+            <h1>appointments.txt</h1>
+            <p class="hint">
+                Read from <code th:text="${filePath}">data/appointments.txt</code>.
+                The file is rewritten after every booking, reschedule, cancel, status change and delete.
+            </p>
+        </div>
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(records)}">
+        <h2>The file is empty</h2>
+        <p>Book an appointment and it will be written here.</p>
+    </div>
+
+    <div class="table-wrap" th:unless="${#lists.isEmpty(records)}">
+        <table class="data-table mono">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Service</th>
+                <th>Stylist</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th class="num">Price</th>
+                <th class="num">Resched.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${records}">
+                <td th:each="field, stat : ${r}" th:text="${field}"
+                    th:classappend="${stat.index >= 10} ? 'num'">value</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

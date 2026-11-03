@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Salon Services</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: white;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        input, select, button {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #364254;
+        }
+
+        button {
+            background: #9b5de5;
+            color: white;
+            cursor: pointer;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 22px;
+            border-radius: 12px;
+        }
+
+        .price {
+            color: #6ee7b7;
+            font-weight: bold;
+        }
+
+        a {
+            color: #c4b5fd;
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="container">
+
+    <a th:href="@{/customer}">
+        Back to Customer Home
+    </a>
+
+    <h1>Our Salon Services</h1>
+
+    <p>Explore our professional grooming services.</p>
+
+    <form class="filters"
+          th:action="@{/customer/services}"
+          method="get">
+
+        <input type="text"
+               name="keyword"
+               placeholder="Search services"
+               th:value="${keyword}">
+
+        <select name="category">
+            <option value="All">All Categories</option>
+
+            <option th:each="category : ${categories}"
+                    th:value="${category}"
+                    th:text="${category}"
+                    th:selected="${category == selectedCategory}">
+            </option>
+        </select>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="grid">
+
+        <article class="card"
+                 th:each="service : ${services}">
+
+            <h2 th:text="${service.name}">
+                Service Name
+            </h2>
+
+            <p th:text="${service.description}">
+                Service Description
+            </p>
+
+            <p>
+                Category:
+                <span th:text="${service.category}">
+                    Category
+                </span>
+            </p>
+
+            <p>
+                Duration:
+                <span th:text="${service.durationMinutes}">
+                    30
+                </span>
+                minutes
+            </p>
+
+            <p class="price"
+               th:text="${service.formattedPrice}">
+                LKR 0.00
+            </p>
+
+            <a th:href="@{/appointments/book}">
+                Book Appointment
+            </a>
+
+        </article>
+
+    </div>
+
+    <p th:if="${#lists.isEmpty(services)}">
+        No active salon services found.
+    </p>
+
+</main>
+
+</body>
+</html>

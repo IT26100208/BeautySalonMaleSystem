@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Our Services - Bella Aura</title>
+  <link rel="stylesheet" th:href="@{/css/services.css}">
+</head>
+<body class="services-body">
+<div class="services-wrapper">
+  <div class="glass-header">
+    <div>
+      <h1>Explore Our Services</h1>
+      <p>Select from our range of grooming and styling treatments</p>
+    </div>
+    <a th:href="@{/customer/dashboard}" class="btn btn-secondary">&larr; Back to Portal</a>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" id="serviceSearchInput" placeholder="Search for haircuts, beard styling, facials...">
+    </div>
+  </div>
+
+  <div class="services-grid">
+    <div th:each="service : ${services}" class="service-card">
+      <div>
+        <span class="badge-duration" th:text="${'⏱ ' + service.durationMinutes + ' mins'}">30 mins</span>
+        <h3 th:text="${service.name}">Service Name</h3>
+        <p class="desc" th:text="${service.description}">Description</p>
+      </div>
+
+      <div class="card-footer">
+        <div class="price" th:text="${'Rs. ' + #numbers.formatDecimal(service.price, 1, 2)}">Rs. 1500.00</div>
+        <div class="card-actions">
+          <a th:href="@{/services/{id}(id=${service.id})}" class="btn btn-secondary">Details</a>
+          <a th:href="@{/appointments/book(serviceId=${service.id})}" class="btn btn-primary">Book</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(services)}" class="glass-form-card empty-state">
+    <h3>No Services Available Yet</h3>
+    <p style="margin-top: 8px;">Please check back soon for our updated salon menu.</p>
+  </div>
+</div>
+
+<script th:src="@{/js/services.js}"></script>
+</body>
+</html>

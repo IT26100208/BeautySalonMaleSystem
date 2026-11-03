@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/appointments.css}">
+</head>
+<body>
+
+<header th:replace="~{customer/fragments :: customerNav('list')}"></header>
+
+<main class="page">
+
+    <div class="page-head">
+        <div>
+            <p class="eyebrow">Your bookings</p>
+            <h1>My Appointments</h1>
+        </div>
+        <a class="btn primary" th:href="@{/appointments/book}">+ Book Appointment</a>
+    </div>
+
+    <div th:replace="~{customer/fragments :: alerts}"></div>
+
+    <div class="empty" th:if="${#lists.isEmpty(appointments)}">
+        <h2>No appointments yet</h2>
+        <p>Book your first visit and it will show up here.</p>
+        <a class="btn primary" th:href="@{/appointments/book}">Book now</a>
+    </div>
+
+    <div class="card-list" th:unless="${#lists.isEmpty(appointments)}">
+        <article class="appt-card" th:each="a : ${appointments}">
+
+            <div class="appt-date">
+                <span class="day" th:text="${#temporals.format(a.appointmentDate, 'dd')}">14</span>
+                <span class="month" th:text="${#temporals.format(a.appointmentDate, 'MMM yyyy')}">Oct 2026</span>
+                <span class="weekday" th:text="${#temporals.format(a.appointmentDate, 'EEEE')}">Wednesday</span>
+            </div>
+
+            <div class="appt-main">
+                <div class="appt-title">
+                    <h3 th:text="${a.serviceName}">Haircut</h3>
+                    <span class="badge type" th:classappend="${a.typeLabel == 'Premium'} ? 'premium'"
+                          th:text="${a.typeLabel}">Regular</span>
+                    <span class="badge" th:classappend="${a.status.cssClass}" th:text="${a.status.label}">Pending</span>
+                </div>
+                <p class="appt-meta">
+                    <span th:text="${a.appointmentTime} + ' – ' + ${a.endTime}">10:00 – 10:30</span>
+                    · with <b th:text="${a.stylist}">Kasun</b>
+                    · <span th:text="'LKR ' + ${#numbers.formatDecimal(a.totalPrice, 1, 'COMMA', 2, 'POINT')}">LKR 1,500.00</span>
+                </p>
+                <p class="appt-notes" th:if="${a.notes}" th:text="${a.notes}">Notes</p>
+                <p class="appt-small">
+                    Booking #<span th:text="${a.id}">1</span>
+                    <span th:if="${a.rescheduleCount > 0}"> · rescheduled <span th:text="${a.rescheduleCount}">1</span>x</span>
+                </p>
+            </div>
+
+            <div class="appt-actions">
+                <a class="btn ghost small" th:if="${a.canReschedule}"
+                   th:href="@{/appointments/{id}/reschedule(id=${a.id})}">Reschedule</a>
+                <form th:if="${a.canCancel}" th:action="@{/appointments/{id}/cancel(id=${a.id})}" method="post"
+                      onsubmit="return confirm('Cancel this appointment?');">
+                    <button type="submit" class="btn danger small">Cancel</button>
+                </form>
+                <span class="hint" th:if="${a.canCancel and !a.canReschedule}"
+                      th:text="'Reschedule closes ' + ${a.rescheduleCutoffHours} + 'h before'">Reschedule closed</span>
+            </div>
+        </article>
+    </div>
+</main>
+
+</body>
+</html>

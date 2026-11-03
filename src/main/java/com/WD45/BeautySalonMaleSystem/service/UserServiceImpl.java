@@ -1,19 +1,16 @@
-
 package com.WD45.BeautySalonMaleSystem.service;
 
 import com.WD45.BeautySalonMaleSystem.dto.AdminDTO;
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
+import com.WD45.BeautySalonMaleSystem.dto.PasswordChangeDTO;
+import com.WD45.BeautySalonMaleSystem.dto.ProfileUpdateDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
-
 import com.WD45.BeautySalonMaleSystem.entity.Admin;
 import com.WD45.BeautySalonMaleSystem.entity.Customer;
 import com.WD45.BeautySalonMaleSystem.entity.User;
-
 import com.WD45.BeautySalonMaleSystem.exception.UserNotFoundException;
 import com.WD45.BeautySalonMaleSystem.repository.UserRepository;
-
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,9 +31,8 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // ==========================================
+
     // READ ALL USERS
-    // ==========================================
 
     @Override
     public List<UserDTO> getAllUsers() {
@@ -47,9 +43,7 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
-    // ==========================================
     // READ ONE USER
-    // ==========================================
 
     @Override
     public UserDTO getUserById(Long id) {
@@ -63,14 +57,15 @@ public class UserServiceImpl implements UserService {
         return convertToDTO(user);
     }
 
-    // ==========================================
+
     // CREATE USER
-    // ==========================================
 
     @Override
     public UserDTO createUser(UserFormDTO dto) {
 
+        // Check whether email already exists
         if (userRepository.existsByEmail(dto.getEmail())) {
+
             throw new IllegalArgumentException(
                     "Email already exists."
             );
@@ -78,45 +73,71 @@ public class UserServiceImpl implements UserService {
 
         User user;
 
+        // Create ADMIN
         if ("ADMIN".equalsIgnoreCase(dto.getUserType())) {
 
             Admin admin = new Admin();
-            admin.setEmployeeId(dto.getEmployeeId());
+
+            admin.setEmployeeId(
+                    dto.getEmployeeId()
+            );
+
             user = admin;
 
-        } else if ("CUSTOMER".equalsIgnoreCase(dto.getUserType())) {
+        }
+
+        // Create CUSTOMER
+        else if ("CUSTOMER".equalsIgnoreCase(dto.getUserType())) {
 
             Customer customer = new Customer();
-            customer.setAddress(dto.getAddress());
+
+            customer.setAddress(
+                    dto.getAddress()
+            );
 
             customer.setLoyaltyNumber(
-                    dto.getLoyaltyNumber() != null
-                            && !dto.getLoyaltyNumber().isBlank()
-                            ? dto.getLoyaltyNumber()
-                            : generateLoyaltyNumber()
+                    dto.getLoyaltyNumber()
             );
 
             user = customer;
 
-        } else {
-            throw new IllegalArgumentException("Invalid user type.");
         }
 
+        // Invalid user type
+        else {
+
+            throw new IllegalArgumentException(
+                    "Invalid user type."
+            );
+        }
+
+
+        // Set common fields
         setCommonUserFields(user, dto);
 
+
+        // Encrypt password
         user.setPassword(
-                passwordEncoder.encode(dto.getPassword())
+                passwordEncoder.encode(
+                        dto.getPassword()
+                )
         );
 
-        return convertToDTO(userRepository.save(user));
+
+        // Save user
+        User savedUser =
+                userRepository.save(user);
+
+
+        return convertToDTO(savedUser);
     }
 
-    // ==========================================
-    // UPDATE USER BY ID (ADMIN MANAGEMENT)
-    // ==========================================
+    // UPDATE USER
 
     @Override
-    public UserDTO updateUser(Long id, UserFormDTO dto) {
+    public UserDTO updateUser(
+            Long id,
+            UserFormDTO dto) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
@@ -124,35 +145,89 @@ public class UserServiceImpl implements UserService {
                                 "User not found with ID: " + id
                         ));
 
-        checkEmailAvailable(dto.getEmail(), id);
 
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setPhoneNumber(dto.getPhoneNumber());
+        // Check email belongs to another user
+        userRepository.findByEmail(dto.getEmail())
+                .ifPresent(existingUser -> {
 
+                    if (!existingUser.getId().equals(id)) {
+
+                        throw new IllegalArgumentException(
+                                "Email already exists."
+                        );
+                    }
+                });
+
+
+        // Update common fields
+        user.setFirstName(
+                dto.getFirstName()
+        );
+
+        user.setLastName(
+                dto.getLastName()
+        );
+
+        user.setEmail(
+                dto.getEmail()
+        );
+
+        user.setPhoneNumber(
+                dto.getPhoneNumber()
+        );
+
+
+
+
+        // Update password only if entered
         if (dto.getPassword() != null
                 && !dto.getPassword().isBlank()) {
 
             user.setPassword(
-                    passwordEncoder.encode(dto.getPassword())
+                    passwordEncoder.encode(
+                            dto.getPassword()
+                    )
             );
         }
 
-        if (user instanceof Admin admin) {
-            admin.setEmployeeId(dto.getEmployeeId());
+
+        // Update ADMIN information
+        if (user instanceof Admin
+                && "ADMIN".equalsIgnoreCase(dto.getUserType())) {
+
+            Admin admin = (Admin) user;
+
+            admin.setEmployeeId(
+                    dto.getEmployeeId()
+            );
         }
 
-        if (user instanceof Customer customer) {
-            customer.setAddress(dto.getAddress());
+
+        // Update CUSTOMER information
+        if (user instanceof Customer
+                && "CUSTOMER".equalsIgnoreCase(dto.getUserType())) {
+
+            Customer customer =
+                    (Customer) user;
+
+            customer.setAddress(
+                    dto.getAddress()
+            );
+
+            customer.setLoyaltyNumber(
+                    dto.getLoyaltyNumber()
+            );
         }
 
-        return convertToDTO(userRepository.save(user));
+
+        User updatedUser =
+                userRepository.save(user);
+
+
+        return convertToDTO(updatedUser);
     }
 
-    // ==========================================
     // DELETE USER
-    // ==========================================
 
     @Override
     public void deleteUser(Long id) {
@@ -166,212 +241,325 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    // ==========================================
     // REGISTER CUSTOMER
-    // ==========================================
 
     @Override
     public UserDTO registerCustomer(UserFormDTO dto) {
 
+        // Check email
         if (userRepository.existsByEmail(dto.getEmail())) {
+
             throw new IllegalArgumentException(
                     "An account with this email already exists."
             );
         }
 
+
         Customer customer = new Customer();
 
-        customer.setFirstName(dto.getFirstName());
-        customer.setLastName(dto.getLastName());
-        customer.setEmail(dto.getEmail());
-        customer.setPhoneNumber(dto.getPhoneNumber());
-        customer.setAddress(dto.getAddress());
 
-        customer.setLoyaltyNumber(generateLoyaltyNumber());
-
-        customer.setPassword(
-                passwordEncoder.encode(dto.getPassword())
+        customer.setFirstName(
+                dto.getFirstName()
         );
 
-        return convertToDTO(userRepository.save(customer));
+        customer.setLastName(
+                dto.getLastName()
+        );
+
+        customer.setEmail(
+                dto.getEmail()
+        );
+
+        customer.setPhoneNumber(
+                dto.getPhoneNumber()
+        );
+
+        customer.setAddress(
+                dto.getAddress()
+        );
+
+
+        // Automatically generate loyalty number
+        customer.setLoyaltyNumber(
+                generateLoyaltyNumber()
+        );
+
+
+        // Encrypt password
+        customer.setPassword(
+                passwordEncoder.encode(
+                        dto.getPassword()
+                )
+        );
+
+
+
+
+        User savedUser =
+                userRepository.save(customer);
+
+
+        return convertToDTO(savedUser);
     }
 
-    // ==========================================
-    // GET CURRENT CUSTOMER PROFILE
-    // ==========================================
-
-    @Override
-    public CustomerDTO getCurrentCustomerProfile() {
-
-        User user = getAuthenticatedUser();
-
-        if (!(user instanceof Customer customer)) {
-            throw new IllegalStateException(
-                    "Only customers can access this profile."
-            );
-        }
-
-        return convertCustomerToDTO(customer);
-    }
-
-    // ==========================================
-    // UPDATE CURRENT CUSTOMER PROFILE
-    // ==========================================
-
-    @Override
-    public CustomerDTO updateCurrentCustomerProfile(
-            UserFormDTO dto) {
-
-        User user = getAuthenticatedUser();
-
-        if (!(user instanceof Customer customer)) {
-            throw new IllegalStateException(
-                    "Only customers can update this profile."
-            );
-        }
-
-        checkEmailAvailable(dto.getEmail(), customer.getId());
-
-        customer.setFirstName(dto.getFirstName());
-        customer.setLastName(dto.getLastName());
-        customer.setEmail(dto.getEmail());
-        customer.setPhoneNumber(dto.getPhoneNumber());
-        customer.setAddress(dto.getAddress());
-
-        // Only change password when the customer enters a new one.
-        if (dto.getPassword() != null
-                && !dto.getPassword().isBlank()) {
-
-            customer.setPassword(
-                    passwordEncoder.encode(dto.getPassword())
-            );
-        }
-
-        Customer savedCustomer =
-                (Customer) userRepository.save(customer);
-
-        return convertCustomerToDTO(savedCustomer);
-    }
-
-    // ==========================================
-    // FIND CURRENTLY AUTHENTICATED USER
-    // ==========================================
-
-    private User getAuthenticatedUser() {
-
-        Authentication authentication =
-                SecurityContextHolder.getContext()
-                        .getAuthentication();
-
-        if (authentication == null
-                || !authentication.isAuthenticated()
-                || authentication.getName() == null
-                || authentication.getName().equals("anonymousUser")) {
-
-            throw new IllegalStateException(
-                    "You must log in to access your profile."
-            );
-        }
-
-        return userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() ->
-                        new UserNotFoundException(
-                                "Logged-in user was not found."
-                        ));
-    }
-
-    // ==========================================
-    // CHECK EMAIL AVAILABILITY
-    // ==========================================
-
-    private void checkEmailAvailable(String email, Long currentId) {
-
-        userRepository.findByEmail(email)
-                .ifPresent(existingUser -> {
-
-                    if (!existingUser.getId().equals(currentId)) {
-                        throw new IllegalArgumentException(
-                                "This email is already registered."
-                        );
-                    }
-                });
-    }
-
-    // ==========================================
     // GENERATE CUSTOMER LOYALTY NUMBER
-    // ==========================================
 
     private String generateLoyaltyNumber() {
 
         return "CUS" + System.currentTimeMillis();
     }
 
-    // ==========================================
     // SET COMMON USER FIELDS
-    // ==========================================
 
     private void setCommonUserFields(
             User user,
             UserFormDTO dto) {
 
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setPhoneNumber(dto.getPhoneNumber());
+        user.setFirstName(
+                dto.getFirstName()
+        );
+
+        user.setLastName(
+                dto.getLastName()
+        );
+
+        user.setEmail(
+                dto.getEmail()
+        );
+
+        user.setPhoneNumber(
+                dto.getPhoneNumber()
+        );
+
+
     }
 
-    // ==========================================
-    // CONVERT ENTITY TO DTO
-    // ==========================================
+    // CONVERT ENTITY → DTO
 
     private UserDTO convertToDTO(User user) {
 
-        if (user instanceof Admin admin) {
+
+        // ADMIN
+        if (user instanceof Admin) {
+
+            Admin admin =
+                    (Admin) user;
 
             AdminDTO dto = new AdminDTO();
 
-            setCommonDTOFields(dto, user);
-            dto.setEmployeeId(admin.getEmployeeId());
+
+            setCommonDTOFields(
+                    dto,
+                    user
+            );
+
+
+            dto.setEmployeeId(
+                    admin.getEmployeeId()
+            );
+
 
             return dto;
         }
 
-        if (user instanceof Customer customer) {
-            return convertCustomerToDTO(customer);
+
+        // CUSTOMER
+        if (user instanceof Customer) {
+
+            Customer customer =
+                    (Customer) user;
+
+            CustomerDTO dto =
+                    new CustomerDTO();
+
+
+            setCommonDTOFields(
+                    dto,
+                    user
+            );
+
+
+            dto.setAddress(
+                    customer.getAddress()
+            );
+
+            dto.setLoyaltyNumber(
+                    customer.getLoyaltyNumber()
+            );
+
+
+            return dto;
         }
 
-        throw new IllegalStateException(
-                "Unknown user type: " + user.getClass().getName()
-        );
+
+        return null;
     }
 
-    // ==========================================
-    // CONVERT CUSTOMER TO CUSTOMER DTO
-    // ==========================================
-
-    private CustomerDTO convertCustomerToDTO(Customer customer) {
-
-        CustomerDTO dto = new CustomerDTO();
-
-        setCommonDTOFields(dto, customer);
-        dto.setAddress(customer.getAddress());
-        dto.setLoyaltyNumber(customer.getLoyaltyNumber());
-
-        return dto;
-    }
-
-    // ==========================================
     // COMMON DTO FIELDS
-    // ==========================================
 
     private void setCommonDTOFields(
             UserDTO dto,
             User user) {
 
-        dto.setId(user.getId());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setEmail(user.getEmail());
-        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setId(
+                user.getId()
+        );
+
+        dto.setFirstName(
+                user.getFirstName()
+        );
+
+        dto.setLastName(
+                user.getLastName()
+        );
+
+        dto.setEmail(
+                user.getEmail()
+        );
+
+        dto.setPhoneNumber(
+                user.getPhoneNumber()
+        );
+
+
+    }
+
+    @Override
+    public CustomerDTO getCurrentCustomerProfile() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        // Query userRepository directly instead of calling getUserByEmail
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Customer not found with email: " + currentUsername));
+
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(user.getId());
+        customerDTO.setFirstName(user.getFirstName());
+        customerDTO.setLastName(user.getLastName());
+        customerDTO.setEmail(user.getEmail());
+        customerDTO.setPhoneNumber(user.getPhoneNumber());
+
+        if (user instanceof Customer customer) {
+            customerDTO.setAddress(customer.getAddress());
+            customerDTO.setLoyaltyNumber(customer.getLoyaltyNumber());
+        }
+
+        return customerDTO;
+    }
+
+    @Override
+    public void updateCurrentCustomerProfile(UserFormDTO userFormDTO) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        // Update logic for current customer profile
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void updateProfile(
+            String email,
+            ProfileUpdateDTO profileUpdateDTO) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Account not found."
+                        )
+                );
+
+        String fullName = profileUpdateDTO.getFullName();
+        String phone = profileUpdateDTO.getPhone();
+
+        // Check the submitted values
+        if (fullName == null || fullName.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Full name is required."
+            );
+        }
+
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Phone number is required."
+            );
+        }
+
+        // Email cannot be changed through this form yet
+        if (profileUpdateDTO.getEmail() == null ||
+                !email.equalsIgnoreCase(
+                        profileUpdateDTO.getEmail().trim())) {
+
+            throw new IllegalArgumentException(
+                    "Email changes are not supported here."
+            );
+        }
+
+        // Separate the full name into first and last names
+        String[] names = fullName.trim().split("\\s+", 2);
+
+        if (names.length < 2) {
+            throw new IllegalArgumentException(
+                    "Please enter both first and last name."
+            );
+        }
+
+        // Update the existing user
+        user.setFirstName(names[0]);
+        user.setLastName(names[1]);
+        user.setPhoneNumber(phone.trim());
+
+        // Save the changes to MySQL
+        userRepository.save(user);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public boolean updatePassword(
+            String email,
+            PasswordChangeDTO passwordChangeDTO) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "Account not found."
+                        )
+                );
+
+        String current = passwordChangeDTO.getCurrentPassword();
+        String next = passwordChangeDTO.getNewPassword();
+        String confirmation = passwordChangeDTO.getConfirmPassword();
+
+        // Validate submitted passwords
+        if (current == null ||
+                next == null ||
+                confirmation == null) {
+            return false;
+        }
+
+        // Verify the current password
+        if (!passwordEncoder.matches(
+                current, user.getPassword())) {
+            return false;
+        }
+
+        // Require a password with at least 8 characters
+        if (next.length() < 8) {
+            return false;
+        }
+
+        // New password and confirmation must match
+        if (!next.equals(confirmation)) {
+            return false;
+        }
+
+        // Prevent reusing the current password
+        if (passwordEncoder.matches(
+                next, user.getPassword())) {
+            return false;
+        }
+
+        // Hash the new password before saving.
+        user.setPassword(passwordEncoder.encode(next));
+
+        userRepository.save(user);
+
+        return true;
     }
 }
