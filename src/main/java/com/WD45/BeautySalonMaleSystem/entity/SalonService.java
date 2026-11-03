@@ -4,6 +4,15 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "services")
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "salon_services")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SalonService {
 
     @Id
@@ -17,6 +26,10 @@ public class SalonService {
     private String category;
 
     @Column(length = 1000)
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(length = 500)
     private String description;
 
     @Column(nullable = false)

@@ -39,3 +39,8 @@ public interface ServiceRepository extends JpaRepository<SalonService, Long> {
     // Check duplicate name excluding current ID (for edit/update)
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 }
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ServiceRepository extends JpaRepository<SalonService, Long> {
+}

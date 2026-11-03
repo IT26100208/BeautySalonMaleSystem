@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${service.name + ' - Bella Aura'}">Service Details</title>
+  <link rel="stylesheet" th:href="@{/css/services.css}">
+</head>
+<body class="services-body">
+<div class="services-wrapper">
+  <div class="glass-form-card">
+            <span class="badge-duration" style="background: rgba(192, 88, 246, 0.2); color: #e2a9ff; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem;"
+                  th:text="${'Duration: ' + service.durationMinutes + ' Minutes'}">45 Minutes</span>
+
+    <h1 style="margin-top: 16px; font-size: 2rem;" th:text="${service.name}">Service Name</h1>
+    <h2 style="color: #e06d9f; margin: 12px 0 24px 0;" th:text="${'Rs. ' + #numbers.formatDecimal(service.price, 1, 2)}">Rs. 2500.00</h2>
+
+    <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 20px; margin-bottom: 30px;">
+      <h4 style="color: #a0a0b2; margin-bottom: 10px; font-weight: 500;">What's Included</h4>
+      <p style="line-height: 1.7; color: #f4f4f6;" th:text="${service.description}">Full service description.</p>
+    </div>
+
+    <div class="form-actions" style="justify-content: space-between;">
+      <a th:href="@{/services}" class="btn btn-secondary">&larr; All Services</a>
+      <a th:href="@{/appointments/book(serviceId=${service.id})}" class="btn btn-primary">Book Appointment Now</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
