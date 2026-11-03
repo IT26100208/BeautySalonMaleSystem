@@ -17,7 +17,12 @@ public class AdminFeedbackController {
 
     @GetMapping
     public String listAllFeedback(Model model) {
-        model.addAttribute("feedback", feedbackService.getAllFeedback());
+
+        model.addAttribute(
+                "feedbacks",
+                feedbackService.getAllFeedback()
+        );
+
         return "admin/feedback";
     }
 }
