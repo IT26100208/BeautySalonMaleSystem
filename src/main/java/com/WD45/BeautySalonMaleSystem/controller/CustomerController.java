@@ -3,12 +3,14 @@ package com.WD45.BeautySalonMaleSystem.controller;
 
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
+import com.WD45.BeautySalonMaleSystem.service.AppointmentService;
 import com.WD45.BeautySalonMaleSystem.entity.Customer;
 import com.WD45.BeautySalonMaleSystem.repository.UserRepository;
 import com.WD45.BeautySalonMaleSystem.service.LoyaltyService;
 import com.WD45.BeautySalonMaleSystem.service.UserService;
 
 import jakarta.validation.Valid;
+import java.security.Principal;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CustomerController {
 
     private final UserService userService;
+    private final AppointmentService appointmentService;
+
+    public CustomerController(UserService userService,AppointmentService appointmentService) {
+        this.userService = userService;
+        this.appointmentService = appointmentService;
     private final UserRepository userRepository;
     private final LoyaltyService loyaltyService;
 
@@ -36,7 +43,33 @@ public class CustomerController {
     // CUSTOMER HOME
     // ==========================================
 
+
     @GetMapping("/customer")
+    public String customerHome(
+            Principal principal,
+            Model model) {
+
+        // Get logged-in customer's details
+        CustomerDTO customer =
+                userService.getCurrentCustomerProfile();
+
+        // Load only this customer's appointments
+        var appointments =
+                appointmentService.getCustomerAppointments(
+                        principal.getName()
+                );
+
+        // Calculate appointment count
+        long totalAppointments = appointments.size();
+
+        // Send information to the HTML page
+        model.addAttribute("customer", customer);
+
+        model.addAttribute(
+                "totalAppointments",
+                totalAppointments
+        );
+
     public String customerHome(Authentication authentication, Model model) {
         Customer customer = userRepository.findByEmail(authentication.getName())
                 .filter(Customer.class::isInstance)

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Details - Bella Aura</title>
+    <link rel="stylesheet" th:href="@{/css/staff.css}">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">✂</div>
+        <h2>Bella Aura</h2>
+        <span>Management System</span>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+    <ul class="nav-menu">
+        <li>
+            <a th:href="@{/dashboard}">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/admin/staff}" class="active">
+                <span class="nav-icon">✂</span>
+                Staff Management
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/dashboard#users}">
+                <span class="nav-icon">👥</span>
+                Users
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/dashboard#customers}">
+                <span class="nav-icon">♙</span>
+                Customers
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/dashboard#appointments}">
+                <span class="nav-icon">◷</span>
+                Appointments
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/dashboard#services}">
+                <span class="nav-icon">✦</span>
+                Services
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-bottom">
+        <div class="admin-profile">
+            <div class="avatar">A</div>
+            <div class="admin-info">
+                <strong>Administrator</strong>
+                <span>System Admin</span>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main">
+    <div class="top-header">
+        <div class="welcome">
+            <h1>Staff Details ✂</h1>
+            <p>Comprehensive overview of staff members.</p>
+        </div>
+        <div class="header-actions">
+            <a th:href="@{/admin/staff}" class="btn secondary">
+                ← Back to Staff Directory
+            </a>
+        </div>
+    </div>
+
+    <div class="table-card glass">
+        <div class="card-header">
+            <h2>Staff Summary</h2>
+            <div class="staff-count">
+                <strong th:text="${#lists.size(staffList)}">0</strong> Members
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="staff : ${staffList}">
+                    <td th:text="${'#' + staff.staffId}">#1</td>
+                    <td class="staff-name" th:text="${staff.name}">John Doe</td>
+                    <td><span class="badge position" th:text="${staff.position}">Barber</span></td>
+                    <td th:text="${staff.phone}">0771234567</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${staff.status == 'ACTIVE' ? 'active' : 'inactive'}"
+                              th:text="${staff.status}">ACTIVE</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(staffList)}">
+                    <td colspan="5" class="empty-message">No staff members found.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

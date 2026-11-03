@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Services - Bella Aura Admin</title>
+  <link rel="stylesheet" th:href="@{/css/services.css}">
+</head>
+<body class="services-body">
+<div class="services-wrapper">
+  <div class="glass-header">
+    <div>
+      <h1>Salon Services Management</h1>
+      <p>Add, edit, or remove salon services and pricing</p>
+    </div>
+    <div class="card-actions">
+      <a th:href="@{/admin/dashboard}" class="btn btn-secondary">&larr; Dashboard</a>
+      <a th:href="@{/admin/services/add}" class="btn btn-primary">+ Add New Service</a>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <input type="text" id="serviceSearchInput" placeholder="Search services by name, description, or price...">
+    </div>
+  </div>
+
+  <div class="glass-table-container">
+    <table class="services-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Service Name</th>
+        <th>Description</th>
+        <th>Duration</th>
+        <th>Price (LKR)</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="service : ${services}" class="service-row">
+        <td th:text="${'#' + service.id}">#1</td>
+        <td style="font-weight: 600;" th:text="${service.name}">Haircut</td>
+        <td th:text="${service.description}">Classic cut</td>
+        <td>
+          <span class="badge-duration" th:text="${service.durationMinutes + ' mins'}">30 mins</span>
+        </td>
+        <td style="color: #e06d9f; font-weight: 600;" th:text="${'Rs. ' + #numbers.formatDecimal(service.price, 1, 2)}">Rs. 1500.00</td>
+        <td>
+          <div class="card-actions">
+            <a th:href="@{/admin/services/edit/{id}(id=${service.id})}" class="btn btn-secondary">Edit</a>
+            <a th:href="@{/admin/services/delete/{id}(id=${service.id})}"
+               th:attr="data-name=${service.name}"
+               class="btn btn-danger js-delete-service">Delete</a>
+          </div>
+        </td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(services)}">
+        <td colspan="6" class="empty-state">No salon services found. Click "+ Add New Service" to create one.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script th:src="@{/js/services.js}"></script>
+</body>
+</html>

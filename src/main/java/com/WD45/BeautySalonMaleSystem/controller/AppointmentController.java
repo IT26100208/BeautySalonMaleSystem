@@ -40,7 +40,7 @@ public class AppointmentController {
     @GetMapping
     public String myAppointments(Principal principal, Model model) {
         model.addAttribute("appointments", appointmentService.getCustomerAppointments(principal.getName()));
-        return "appointment/list";
+        return "customer/list";
     }
 
     // ---------------- Book ----------------
@@ -49,7 +49,7 @@ public class AppointmentController {
     public String bookForm(Model model) {
         model.addAttribute("form", new AppointmentFormDTO());
         addBookingOptions(model);
-        return "appointment/book";
+        return "customer/book";
     }
 
     @PostMapping("/book")
@@ -60,7 +60,7 @@ public class AppointmentController {
                        RedirectAttributes redirect) {
         if (result.hasErrors()) {
             addBookingOptions(model);
-            return "appointment/book";
+            return "customer/book";
         }
         try {
             AppointmentDTO booked = appointmentService.bookAppointment(form, principal.getName());
@@ -70,7 +70,7 @@ public class AppointmentController {
         } catch (InvalidAppointmentException e) {
             model.addAttribute("error", e.getMessage());
             addBookingOptions(model);
-            return "appointment/book";
+            return "customer/book";
         }
     }
 
@@ -91,7 +91,7 @@ public class AppointmentController {
             model.addAttribute("form", new RescheduleDTO(
                     appointment.getAppointmentDate(), appointment.getAppointmentTime(), appointment.getStylist()));
             addRescheduleOptions(model);
-            return "appointment/reschedule";
+            return "customer/reschedule";
         } catch (AppointmentNotFoundException e) {
             redirect.addFlashAttribute("error", e.getMessage());
             return REDIRECT_LIST;
@@ -143,7 +143,7 @@ public class AppointmentController {
             model.addAttribute("error", error);
         }
         addRescheduleOptions(model);
-        return "appointment/reschedule";
+        return "customer/reschedule";
     }
 
     private void addBookingOptions(Model model) {

@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<header th:replace="~{appointment/fragments :: customerNav('book')}"></header>
+<header th:replace="~{customer/fragments :: customerNav('book')}"></header>
 
 <main class="page">
 
@@ -20,7 +20,7 @@
         <a class="btn ghost" th:href="@{/appointments}">Back to my appointments</a>
     </div>
 
-    <div th:replace="~{appointment/fragments :: alerts}"></div>
+    <div th:replace="~{customer/fragments :: alerts}"></div>
 
     <form th:action="@{/appointments/book}" th:object="${form}" method="post" class="booking-layout" id="bookingForm">
 
