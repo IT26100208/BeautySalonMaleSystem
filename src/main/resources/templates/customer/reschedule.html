@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<header th:replace="~{appointment/fragments :: customerNav('list')}"></header>
+<header th:replace="~{customer/fragments :: customerNav('list')}"></header>
 
 <main class="page narrow">
 
@@ -20,7 +20,7 @@
         <a class="btn ghost" th:href="@{/appointments}">Back</a>
     </div>
 
-    <div th:replace="~{appointment/fragments :: alerts}"></div>
+    <div th:replace="~{customer/fragments :: alerts}"></div>
 
     <div class="panel current">
         <h2>Current booking</h2>

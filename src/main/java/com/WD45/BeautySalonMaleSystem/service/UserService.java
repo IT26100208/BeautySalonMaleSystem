@@ -1,35 +1,35 @@
-
 package com.WD45.BeautySalonMaleSystem.service;
 
-import com.WD45.BeautySalonMaleSystem.dto.UserDTO;
-import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
-import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
+
+import com.WD45.BeautySalonMaleSystem.dto.*;
 
 import java.util.List;
 
 public interface UserService {
 
-    // READ ALL USERS
+    // READ ALL
     List<UserDTO> getAllUsers();
 
-    // READ ONE USER
+    // READ ONE
     UserDTO getUserById(Long id);
 
-    // CREATE USER
+    // CREATE
     UserDTO createUser(UserFormDTO user);
 
-    // UPDATE USER
+    // UPDATE
     UserDTO updateUser(Long id, UserFormDTO user);
 
-    // DELETE USER
+    // DELETE
     void deleteUser(Long id);
 
     // CUSTOMER REGISTRATION
     UserDTO registerCustomer(UserFormDTO user);
 
-    // GET LOGGED-IN CUSTOMER PROFILE
     CustomerDTO getCurrentCustomerProfile();
 
-    // UPDATE LOGGED-IN CUSTOMER PROFILE
-    CustomerDTO updateCurrentCustomerProfile(UserFormDTO user);
+    void updateCurrentCustomerProfile(UserFormDTO userFormDTO);
+
+    void updateProfile(String email, ProfileUpdateDTO profileUpdateDTO);
+
+    boolean updatePassword(String email, PasswordChangeDTO passwordChangeDTO);
 }

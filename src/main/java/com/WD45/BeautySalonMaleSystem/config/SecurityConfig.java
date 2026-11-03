@@ -52,28 +52,46 @@ public class SecurityConfig {
 
         return args -> {
 
-            if (!userRepository.existsByEmail(
-                    "admin@salon.com")) {
+            // Read the temporary reset password from
+            // your computer's environment.
+            String resetPassword =
+                    System.getenv("SALON_ADMIN_RESET_PASSWORD");
 
-                Admin admin = new Admin();
+            // Only run the reset when explicitly requested.
+            if (resetPassword == null || resetPassword.isBlank()) {
+                return;
+            }
 
-                admin.setFirstName("System");
-                admin.setLastName("Admin");
-                admin.setEmail("admin@salon.com");
-                admin.setPhoneNumber("0761234567");
-
-                admin.setPassword(
-                        passwordEncoder.encode("admin123")
-                );
-
-                admin.setEmployeeId("ADM001");
-
-                userRepository.save(admin);
-
-                System.out.println(
-                        "Admin account created successfully!"
+            if (resetPassword.length() < 12) {
+                throw new IllegalArgumentException(
+                        "Reset password must be at least 12 characters."
                 );
             }
+
+            // Find the existing admin account.
+            Admin admin = userRepository
+                    .findByEmail("admin@salon.com")
+                    .filter(user -> user instanceof Admin)
+                    .map(user -> (Admin) user)
+                    .orElseThrow(() ->
+                            new IllegalStateException(
+                                    "Admin account not found."
+                            )
+                    );
+
+            // Encrypt the new password using BCrypt.
+            String encodedPassword =
+                    passwordEncoder.encode(resetPassword);
+
+            // Replace the old password with the encoded one.
+            admin.setPassword(encodedPassword);
+
+            // Save the updated admin.
+            userRepository.save(admin);
+
+            System.out.println(
+                    "Admin password reset successfully!"
+            );
         };
     }
 
@@ -108,14 +126,8 @@ public class SecurityConfig {
 
         return (request, response, authentication) -> {
 
-            if (authentication.getAuthorities()
-                    .stream()
-                    .anyMatch(a ->
-                            a.getAuthority()
-                                    .equals("ROLE_ADMIN"))) {
-
-                response.sendRedirect("/dashboard");
-
+            if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
             } else if (authentication.getAuthorities()
                     .stream()
                     .anyMatch(a ->
@@ -151,14 +163,15 @@ public class SecurityConfig {
                                 "/register",
                                 "/css/**",
                                 "/js/**",
-                                "/images/**"
-                        )
-                        .permitAll()
+                                "/images/**",
+                                "/webjars/**"
+                        ).permitAll()
 
                         // ADMIN
-                        .requestMatchers(
-                                "/dashboard/**"
-                        )
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/dashboard/services/**")
                         .hasRole("ADMIN")
 
                         // CUSTOMER
@@ -166,6 +179,24 @@ public class SecurityConfig {
                                 "/customer/**"
                         )
                         .hasRole("CUSTOMER")
+
+                        // Customer appointment management
+                        .requestMatchers("/appointments", "/appointments/**")
+                        .hasRole("CUSTOMER")
+
+                        // SERVICES
+                        .requestMatchers("/services/**")
+                        .permitAll()
+
+                        //PUBLIC BROWSING
+                        .requestMatchers(
+                                "/settings",
+                                "/settings/**"
+                        ).authenticated()
+
+                        //FEEDBACK
+                        .requestMatchers("/customer/feedback/**").hasAnyRole("CUSTOMER", "ADMIN")
+                        .requestMatchers("/admin/feedback/**").hasRole("ADMIN")
 
                         // EVERYTHING ELSE
                         .anyRequest()

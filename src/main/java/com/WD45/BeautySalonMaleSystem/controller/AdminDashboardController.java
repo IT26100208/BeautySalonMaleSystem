@@ -1,10 +1,14 @@
 package com.WD45.BeautySalonMaleSystem.controller;
 
+import com.WD45.BeautySalonMaleSystem.dto.DashboardStatsDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
+import com.WD45.BeautySalonMaleSystem.entity.SystemSettings;
+import com.WD45.BeautySalonMaleSystem.service.DashboardService;
 import com.WD45.BeautySalonMaleSystem.service.UserService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,36 +17,44 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/dashboard")
+@RequestMapping("/admin")
 public class AdminDashboardController {
-
+    private final DashboardService dashboardService;
     private final UserService userService;
 
-    public AdminDashboardController(UserService userService) {
+    @Autowired
+    public AdminDashboardController(DashboardService dashboardService, UserService userService) {
+        this.dashboardService = dashboardService;
         this.userService = userService;
     }
 
-
-
     // ADMIN DASHBOARD
-
-
-    @GetMapping
-    public String dashboard(Model model) {
-
-        model.addAttribute(
-                "users",
-                userService.getAllUsers()
-        );
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model) {
+        DashboardStatsDTO stats = dashboardService.getDashboardStats();
+        model.addAttribute("stats", stats);
+        model.addAttribute("users", userService.getAllUsers());
 
         return "admin/dashboard";
     }
 
+    //SETTINGS
+    @GetMapping("/settings")
+    public String showSettings(Model model) {
+        SystemSettings settings = dashboardService.getSystemSettings();
+        model.addAttribute("settings", settings);
+        return "admin/settings";
+    }
 
+    @PostMapping("/settings")
+    public String updateSettings(@ModelAttribute("settings") SystemSettings settings, Model model) {
+        dashboardService.saveSystemSettings(settings);
+        model.addAttribute("settings", dashboardService.getSystemSettings());
+        model.addAttribute("successMessage", "Salon settings updated successfully!");
+        return "admin/settings";
+    }
 
     // UPDATE USER
-
-
     @PostMapping("/update/{id}")
     public String updateUser(
 
@@ -63,7 +75,7 @@ public class AdminDashboardController {
                     "Please enter valid user information."
             );
 
-            return "redirect:/dashboard";
+            return "redirect:/admin/dashboard";
         }
 
         try {
@@ -86,7 +98,7 @@ public class AdminDashboardController {
             );
         }
 
-        return "redirect:/dashboard";
+        return "redirect:/admin/dashboard";
     }
 
 
@@ -118,6 +130,6 @@ public class AdminDashboardController {
             );
         }
 
-        return "redirect:/dashboard";
+        return "redirect:/admin/dashboard";
     }
 }
