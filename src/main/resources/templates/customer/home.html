@@ -58,6 +58,9 @@
         .sidebar {
             position: fixed;
             right: 20px;
+
+            left: 20px;
+
             top: 20px;
             bottom: 20px;
             width: 245px;
@@ -224,6 +227,9 @@
 
         .main {
             margin-right: 285px;
+
+            margin-left: 285px;
+
             min-height: 100vh;
             padding: 35px;
         }
@@ -588,6 +594,7 @@
         @media (max-width: 1000px) {
 
             .sidebar { width: 205px; }
+                margin-left: 230px;
 
             .main {
                 margin-right: 230px;
@@ -618,6 +625,9 @@
 
             .main {
                 margin-right: 0;
+
+                margin-left: 0;
+
                 padding: 20px 15px;
             }
 
@@ -710,6 +720,7 @@
         <li>
 
             <a th:href="@{/customer/services}">
+            <a th:href="@{/appointments/book}">
 
                 <span class="nav-icon">
                     ✦
@@ -731,6 +742,7 @@
         <li>
 
             <a th:href="@{/customer/profile}">
+            <a th:href="@{/customer/loyalty}">
 
                 <span class="nav-icon">
                     ♡
@@ -773,19 +785,16 @@
 
         <div class="customer-profile">
 
-            <div class="avatar">
-                C
-            </div>
+            <div class="avatar" th:text="${#strings.substring(customer.firstName, 0, 1)}">C</div>
 
             <div class="customer-info">
 
                 <strong th:text="${customer.firstName + ' ' + customer.lastName}">
                     Customer
                 </strong>
+                <strong th:text="${customer.firstName + ' ' + customer.lastName}">Customer</strong>
 
-                <span>
-                    Member
-                </span>
+                <span>Customer account</span>
 
             </div>
 

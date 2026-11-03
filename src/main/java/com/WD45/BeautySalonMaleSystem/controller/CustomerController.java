@@ -4,11 +4,15 @@ package com.WD45.BeautySalonMaleSystem.controller;
 import com.WD45.BeautySalonMaleSystem.dto.CustomerDTO;
 import com.WD45.BeautySalonMaleSystem.dto.UserFormDTO;
 import com.WD45.BeautySalonMaleSystem.service.AppointmentService;
+import com.WD45.BeautySalonMaleSystem.entity.Customer;
+import com.WD45.BeautySalonMaleSystem.repository.UserRepository;
+import com.WD45.BeautySalonMaleSystem.service.LoyaltyService;
 import com.WD45.BeautySalonMaleSystem.service.UserService;
 
 import jakarta.validation.Valid;
 import java.security.Principal;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +30,13 @@ public class CustomerController {
     public CustomerController(UserService userService,AppointmentService appointmentService) {
         this.userService = userService;
         this.appointmentService = appointmentService;
+    private final UserRepository userRepository;
+    private final LoyaltyService loyaltyService;
+
+    public CustomerController(UserService userService, UserRepository userRepository, LoyaltyService loyaltyService) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.loyaltyService = loyaltyService;
     }
 
     // ==========================================
@@ -59,7 +70,25 @@ public class CustomerController {
                 totalAppointments
         );
 
+    public String customerHome(Authentication authentication, Model model) {
+        Customer customer = userRepository.findByEmail(authentication.getName())
+                .filter(Customer.class::isInstance)
+                .map(Customer.class::cast)
+                .orElseThrow(() -> new IllegalStateException("Customer account was not found."));
+        model.addAttribute("customer", customer);
         return "customer/home";
+    }
+
+    @GetMapping("/customer/loyalty")
+    public String loyalty(Authentication authentication, Model model) {
+        Customer customer = userRepository.findByEmail(authentication.getName())
+                .filter(Customer.class::isInstance)
+                .map(Customer.class::cast)
+                .orElseThrow(() -> new IllegalStateException("Customer account was not found."));
+        model.addAttribute("customer", customer);
+        model.addAttribute("pointsBalance", loyaltyService.getPointsBalance(customer));
+        model.addAttribute("loyaltyHistory", loyaltyService.getHistory(customer));
+        return "customer/loyalty";
     }
 
     // ==========================================
