@@ -41,7 +41,7 @@ public class AppointmentDTO {
         this.customerName = a.getCustomerName();
         this.customerEmail = a.getCustomerEmail();
         this.phoneNumber = a.getPhoneNumber();
-        this.serviceName = a.getServiceType().getDisplayName();
+        this.serviceName = a.getServiceName();
         this.typeLabel = a.getTypeLabel();
         this.stylist = a.getStylist();
         this.appointmentDate = a.getAppointmentDate();
