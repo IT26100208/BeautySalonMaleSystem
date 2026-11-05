@@ -40,8 +40,18 @@ public abstract class Appointment {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "service_type", nullable = false, length = 40)
+    @Column(name = "service_type", length = 40)
     private ServiceType serviceType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "service_id")
+    private SalonService salonService;
+
+    @Column(name = "finalized_price", precision = 12, scale = 2)
+    private BigDecimal finalizedPrice;
+
+    @Column(name = "booked_duration_minutes")
+    private Integer bookedDurationMinutes;
 
     @Column(name = "stylist", nullable = false, length = 60)
     private String stylist;
@@ -87,7 +97,22 @@ public abstract class Appointment {
 
     /** Total time the stylist is booked for. Subclasses may add extra time. */
     public int getDurationMinutes() {
-        return serviceType.getDurationMinutes();
+
+        if (bookedDurationMinutes != null) {
+            return bookedDurationMinutes;
+        }
+
+        if (salonService != null) {
+            return salonService.getDurationMinutes();
+        }
+
+        if (serviceType != null) {
+            return serviceType.getDurationMinutes();
+        }
+
+        throw new IllegalStateException(
+                "Appointment duration is unavailable."
+        );
     }
 
     // ------------------------------------------------------------------
@@ -140,10 +165,24 @@ public abstract class Appointment {
 
     /** Used by the admin to confirm / complete / mark no-show / cancel. */
     public void changeStatus(AppointmentStatus newStatus) {
+
         if (!status.canMoveTo(newStatus)) {
             throw new InvalidAppointmentException(
-                    "Cannot change status from " + status.getLabel() + " to " + newStatus.getLabel() + ".");
+                    "Cannot change status from "
+                            + status.getLabel()
+                            + " to "
+                            + newStatus.getLabel()
+                            + "."
+            );
         }
+
+        // Freeze the price at the moment of completion.
+        if (newStatus == AppointmentStatus.COMPLETED
+                && finalizedPrice == null) {
+
+            finalizedPrice = calculateTotalPrice();
+        }
+
         this.status = newStatus;
     }
 
@@ -248,4 +287,66 @@ public abstract class Appointment {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
+
+    public SalonService getSalonService() {
+        return salonService;
+    }
+
+    public void setSalonService(SalonService salonService) {
+        this.salonService = salonService;
+    }
+
+    public BigDecimal getFinalizedPrice() {
+        return finalizedPrice;
+    }
+
+    public Integer getBookedDurationMinutes() {
+        return bookedDurationMinutes;
+    }
+
+    public void setBookedDurationMinutes(Integer minutes) {
+        this.bookedDurationMinutes = minutes;
+    }
+
+
+    public String getServiceName() {
+
+        if (salonService != null) {
+            return salonService.getName();
+        }
+
+        if (serviceType != null) {
+            return serviceType.getDisplayName();
+        }
+
+        return "Unknown Service";
+    }
+
+
+    protected BigDecimal getCurrentBasePrice() {
+
+        if (salonService != null) {
+
+            Double price = salonService.getPrice();
+
+            if (price == null || !Double.isFinite(price)
+                    || price < 0) {
+                throw new IllegalStateException(
+                        "Service has an invalid price."
+                );
+            }
+
+            return BigDecimal.valueOf(price);
+        }
+
+        if (serviceType != null) {
+            return serviceType.getBasePrice();
+        }
+
+        throw new IllegalStateException(
+                "No service is associated with this appointment."
+        );
+    }
+
+
 }
