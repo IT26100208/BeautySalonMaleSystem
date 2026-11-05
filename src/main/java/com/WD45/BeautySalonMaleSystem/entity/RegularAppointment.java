@@ -18,7 +18,13 @@ public class RegularAppointment extends Appointment {
 
     @Override
     public BigDecimal calculateTotalPrice() {
-        return getServiceType().getBasePrice();
+
+        if (getFinalizedPrice() != null) {
+            return getFinalizedPrice();
+        }
+
+        return getCurrentBasePrice()
+                .setScale(2, java.math.RoundingMode.HALF_UP);
     }
 
     @Override

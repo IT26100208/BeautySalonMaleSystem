@@ -24,8 +24,13 @@ public class PremiumAppointment extends Appointment {
 
     @Override
     public BigDecimal calculateTotalPrice() {
-        return getServiceType().getBasePrice()
-                .multiply(PREMIUM_RATE)
+
+        if (getFinalizedPrice() != null) {
+            return getFinalizedPrice();
+        }
+
+        return getCurrentBasePrice()
+                .multiply(new BigDecimal("1.30"))
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
