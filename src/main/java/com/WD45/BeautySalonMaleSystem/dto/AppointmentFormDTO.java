@@ -1,7 +1,6 @@
 package com.WD45.BeautySalonMaleSystem.dto;
 
 import com.WD45.BeautySalonMaleSystem.entity.AppointmentType;
-import com.WD45.BeautySalonMaleSystem.entity.ServiceType;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +23,7 @@ public class AppointmentFormDTO {
     private String phoneNumber;
 
     @NotNull(message = "Please choose a service")
-    private ServiceType serviceType;
+    private Long serviceId;
 
     @NotNull(message = "Please choose a package")
     private AppointmentType appointmentType = AppointmentType.REGULAR;
@@ -60,12 +59,12 @@ public class AppointmentFormDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public ServiceType getServiceType() {
-        return serviceType;
+    public Long getServiceId() {
+        return serviceId;
     }
 
-    public void setServiceType(ServiceType serviceType) {
-        this.serviceType = serviceType;
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 
     public AppointmentType getAppointmentType() {
