@@ -5,9 +5,11 @@ import com.WD45.BeautySalonMaleSystem.dto.AppointmentFormDTO;
 import com.WD45.BeautySalonMaleSystem.dto.RescheduleDTO;
 import com.WD45.BeautySalonMaleSystem.entity.Appointment;
 import com.WD45.BeautySalonMaleSystem.entity.AppointmentStatus;
+import com.WD45.BeautySalonMaleSystem.entity.SalonService;
 import com.WD45.BeautySalonMaleSystem.exception.AppointmentNotFoundException;
 import com.WD45.BeautySalonMaleSystem.exception.InvalidAppointmentException;
 import com.WD45.BeautySalonMaleSystem.repository.AppointmentRepository;
+import com.WD45.BeautySalonMaleSystem.repository.ServiceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,36 +33,93 @@ public class AppointmentServiceImpl implements AppointmentService {
     private static final List<String> STYLISTS = List.of("Kasun", "Nimal", "Tharindu", "Ashen");
 
     private final AppointmentRepository appointmentRepository;
+    private final ServiceRepository serviceRepository;
     private final AppointmentFileHandler fileHandler;
 
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository,
-                                  AppointmentFileHandler fileHandler) {
+    public AppointmentServiceImpl(
+            AppointmentRepository appointmentRepository,
+            AppointmentFileHandler fileHandler,
+            ServiceRepository serviceRepository) {
+
         this.appointmentRepository = appointmentRepository;
         this.fileHandler = fileHandler;
+        this.serviceRepository = serviceRepository;
     }
 
     // ------------------------------------------------------------------
     // Customer operations
     // ------------------------------------------------------------------
 
+
     @Override
-    public AppointmentDTO bookAppointment(AppointmentFormDTO form, String customerEmail) {
-        // Polymorphism: the chosen type creates a RegularAppointment or PremiumAppointment
-        Appointment appointment = form.getAppointmentType().createAppointment();
+    public AppointmentDTO bookAppointment(
+            AppointmentFormDTO form,
+            String customerEmail) {
+
+        //Find the selected service
+        SalonService selectedService = serviceRepository
+                .findById(form.getServiceId())
+                .orElseThrow(() ->
+                        new InvalidAppointmentException(
+                                "The selected salon service does not exist."
+                        )
+                );
+
+        //Allow bookings only for active services
+        if (!Boolean.TRUE.equals(selectedService.getIsActive())) {
+            throw new InvalidAppointmentException(
+                    "This service is currently unavailable."
+            );
+        }
+
+        //Validate the current service values
+        if (selectedService.getPrice() == null
+                || !Double.isFinite(selectedService.getPrice())
+                || selectedService.getPrice() <= 0
+                || selectedService.getDurationMinutes() == null
+                || selectedService.getDurationMinutes() <= 0) {
+
+            throw new InvalidAppointmentException(
+                    "This service has invalid pricing or duration."
+            );
+        }
+
+        //Create Regular or Premium appointment
+        Appointment appointment =
+                form.getAppointmentType().createAppointment();
+
         appointment.setCustomerEmail(customerEmail);
-        appointment.setCustomerName(form.getCustomerName().trim());
-        appointment.setPhoneNumber(form.getPhoneNumber().trim());
-        appointment.setServiceType(form.getServiceType());
+        appointment.setCustomerName(
+                form.getCustomerName().trim()
+        );
+        appointment.setPhoneNumber(
+                form.getPhoneNumber().trim()
+        );
+
+        //Link the real database service
+        appointment.setSalonService(selectedService);
+
+        // Preserve duration at booking time
+        appointment.setBookedDurationMinutes(
+                selectedService.getDurationMinutes()
+        );
+
         appointment.setStylist(form.getStylist());
         appointment.setAppointmentDate(form.getAppointmentDate());
         appointment.setAppointmentTime(form.getAppointmentTime());
         appointment.setNotes(blankToNull(form.getNotes()));
 
+        //Validate date, time and stylist availability
         LocalDateTime now = now();
+
         validateSlot(appointment, now);
 
-        Appointment saved = appointmentRepository.save(appointment);
+        //Save the booking
+        Appointment saved =
+                appointmentRepository.save(appointment);
+
         syncFile();
+
         return AppointmentDTO.from(saved, now);
     }
 
