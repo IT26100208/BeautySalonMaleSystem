@@ -95,7 +95,7 @@ public class AppointmentFileHandler {
                 clean(a.getCustomerName()),
                 clean(a.getCustomerEmail()),
                 clean(a.getPhoneNumber()),
-                a.getServiceType().getDisplayName(),
+                clean(a.getServiceName()),
                 clean(a.getStylist()),
                 a.getAppointmentDate().toString(),
                 a.getAppointmentTime().toString(),
