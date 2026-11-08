@@ -1,78 +1,844 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Reschedule Appointment - Bella Aura</title>
+
     <link rel="stylesheet" th:href="@{/css/appointments.css}">
+
+    <style>
+        /* Bella Aura — Reschedule Page */
+
+        body.reschedule-page {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: white;
+
+            background:
+                linear-gradient(
+                    rgba(15,10,20,0.65),
+                    rgba(15,10,20,0.65)
+                ),
+                url("/images/bg3.jpg") center/cover fixed no-repeat;
+        }
+
+        /* Bella Aura customer sidebar */
+
+        .sidebar {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            bottom: 20px;
+            width: 245px;
+            padding: 25px 18px;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.20);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            z-index: 10;
+        }
+
+        .logo {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .logo-icon {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            border-radius: 18px;
+            font-size: 27px;
+            background: linear-gradient(135deg,#ff69b4,#9b5de5);
+        }
+
+        .logo h2 {
+            font-size: 17px;
+        }
+
+        .logo span {
+            display: block;
+            margin-top: 5px;
+            color: rgba(255,255,255,0.55);
+            font-size: 11px;
+        }
+
+        .nav-title {
+            margin: 20px 10px 10px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 7px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 14px;
+            border-radius: 14px;
+            color: rgba(255,255,255,0.70);
+            font-size: 13px;
+            transition: 0.25s;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.10);
+            color: white;
+        }
+
+        .nav-menu a.active {
+            background: linear-gradient(
+                135deg,
+                rgba(255,105,180,0.30),
+                rgba(155,93,229,0.30)
+            );
+            color: white;
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Main content beside the right sidebar */
+        .reschedule-main {
+            width: auto;
+            max-width: 1100px;
+            margin: 0 285px 0 0;
+            padding: 40px 35px 70px;
+        }
+
+        .reschedule-main .page-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .reschedule-main .eyebrow {
+            color: #ff9dca;
+            font-size: 12px;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .reschedule-main h1 {
+            color: white;
+            font-size: 32px;
+        }
+
+        .reschedule-main h2 {
+            color: white;
+            font-size: 21px;
+            margin-bottom: 22px;
+        }
+
+        /* Main glass cards */
+        .reschedule-main .panel {
+            background: rgba(105,101,115,0.42);
+            border: 1px solid rgba(255,255,255,0.24);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 24px;
+
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,0.25),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        /* Current appointment information */
+        .reschedule-main .inline-dl {
+            display: grid;
+            grid-template-columns: minmax(100px, 150px) 1fr;
+            gap: 16px;
+            margin: 0;
+        }
+
+        .reschedule-main .inline-dl dt {
+            color: rgba(255,255,255,0.65);
+            font-size: 13px;
+        }
+
+        .reschedule-main .inline-dl dd {
+            margin: 0;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Reschedule form */
+        .reschedule-main .field-row.three {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 18px;
+        }
+
+        .reschedule-main .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .reschedule-main .form-group label {
+            color: rgba(255,255,255,0.9);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .reschedule-main input[type="date"],
+        .reschedule-main select {
+            width: 100%;
+            padding: 14px;
+            color: white;
+            background: rgba(25,18,35,0.75);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .reschedule-main select option {
+            color: #111827;
+            background: white;
+        }
+
+        .reschedule-main input:focus,
+        .reschedule-main select:focus {
+            outline: 2px solid #ff9dca;
+            outline-offset: 1px;
+        }
+
+        /* Useful information */
+        .reschedule-main .hint {
+            padding: 17px;
+            margin: 24px 0;
+            line-height: 1.7;
+            color: #f1dcec;
+            background: rgba(155,93,229,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 14px;
+        }
+
+        /* Actions */
+        .reschedule-main .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .reschedule-main .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .reschedule-main .btn.primary {
+            background: linear-gradient(135deg,#ff69b4,#9b5de5);
+            color: white;
+            border: 0;
+        }
+
+        .reschedule-main .btn.ghost {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.24);
+        }
+
+        .reschedule-main .validation-error {
+            color: #fecaca;
+            font-size: 12px;
+        }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .reschedule-main {
+                margin: 0;
+                max-width: none;
+                padding: 25px 18px 55px;
+            }
+
+            .reschedule-main .field-row.three {
+                grid-template-columns: 1fr;
+            }
+
+            .reschedule-main .panel {
+                padding: 22px;
+            }
+
+            body.reschedule-page {
+                background-attachment: scroll;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .reschedule-main h1 {
+                font-size: 26px;
+            }
+
+            .reschedule-main .inline-dl {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .reschedule-main .form-actions {
+                flex-direction: column;
+            }
+
+            .reschedule-main .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+
+        /* =========================================
+           BELLA AURA - RESCHEDULE LAYOUT FIX
+           ========================================= */
+
+        /* Desktop: separate sidebar and main content */
+        body.reschedule-page {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 265px;
+            column-gap: 24px;
+            align-items: start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Sidebar occupies its own column */
+        body.reschedule-page > aside.sidebar {
+            grid-column: 2;
+            grid-row: 1;
+
+            position: sticky;
+            top: 20px;
+            right: auto;
+            bottom: auto;
+            left: auto;
+
+            width: 100%;
+            height: calc(100vh - 40px);
+            max-height: calc(100vh - 40px);
+            margin: 0;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        /* Center reschedule content inside its column */
+        body.reschedule-page > main.reschedule-main {
+            grid-column: 1;
+            grid-row: 1;
+
+            width: 100%;
+            max-width: 900px;
+            min-width: 0;
+
+            margin: 0 auto;
+            padding: 20px 12px 55px;
+
+            box-sizing: border-box;
+        }
+
+        /* Ensure cards never overflow their area */
+        .reschedule-main .panel {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        /* Consistent sidebar navigation */
+        body.reschedule-page .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        body.reschedule-page .nav-menu li {
+            margin: 0 0 8px;
+            padding: 0;
+            list-style: none;
+        }
+
+        body.reschedule-page .nav-menu a {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 14px;
+
+            color: rgba(255,255,255,0.78);
+            text-decoration: none;
+
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.4;
+
+            border-radius: 14px;
+            box-sizing: border-box;
+        }
+
+        /* Align icon and text */
+        body.reschedule-page .nav-icon {
+            display: inline-flex;
+            flex: 0 0 32px;
+            align-items: center;
+            justify-content: center;
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Hover effect */
+        body.reschedule-page .nav-menu a:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.12);
+            text-decoration: none;
+        }
+
+        /* Current page indicator */
+        body.reschedule-page .nav-menu a.active {
+            color: white;
+            text-decoration: none;
+
+            background: linear-gradient(
+                135deg,
+                rgba(255,105,180,0.30),
+                rgba(155,93,229,0.30)
+            );
+
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+
+        /* Keep form fields inside the panel */
+        .reschedule-main .field-row.three {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .reschedule-main .field-row.three > * {
+            min-width: 0;
+        }
+
+        .reschedule-main input,
+        .reschedule-main select {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* =========================================
+           TABLET AND MINIMIZED WINDOWS
+           ========================================= */
+
+        @media (max-width: 1100px) {
+
+            body.reschedule-page {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                padding: 15px;
+            }
+
+            /* Sidebar becomes normal content */
+            body.reschedule-page > aside.sidebar {
+                position: relative;
+                top: auto;
+                right: auto;
+                bottom: auto;
+                left: auto;
+
+                order: 0;
+
+                width: 100%;
+                height: auto;
+                max-height: none;
+
+                margin: 0;
+                padding: 20px;
+
+                overflow: visible;
+            }
+
+            /* Navigation becomes a responsive grid */
+            body.reschedule-page .nav-menu {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0,1fr));
+                gap: 8px;
+            }
+
+            body.reschedule-page .nav-menu li {
+                margin: 0;
+                min-width: 0;
+            }
+
+            body.reschedule-page .nav-menu a {
+                padding: 10px;
+                min-width: 0;
+            }
+
+            body.reschedule-page > main.reschedule-main {
+                order: 1;
+
+                width: 100%;
+                max-width: 850px;
+
+                margin: 0 auto;
+                padding: 20px 0 50px;
+            }
+
+            .reschedule-main .field-row.three {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+        }
+
+        /* =========================================
+           MOBILE PHONES
+           ========================================= */
+
+        @media (max-width: 600px) {
+
+            body.reschedule-page {
+                padding: 10px;
+            }
+
+            body.reschedule-page .nav-menu {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+
+            body.reschedule-page > main.reschedule-main {
+                padding: 15px 0 35px;
+            }
+
+            .reschedule-main .field-row.three {
+                grid-template-columns: 1fr;
+            }
+
+            .reschedule-main .panel {
+                padding: 20px 16px;
+            }
+
+            .reschedule-main .form-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .reschedule-main .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        /* Extra-small screens */
+        @media (max-width: 360px) {
+            body.reschedule-page .nav-menu {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
 </head>
-<body>
 
-<header th:replace="~{appointment/fragments :: customerNav('list')}"></header>
+<body class="reschedule-page">
 
-<main class="page narrow">
+<!-- CUSTOMER NAVIGATION -->
+<aside class="sidebar">
 
+    <div class="logo">
+        <div class="logo-icon">✂</div>
+        <h2>Bella Aura</h2>
+        <span>Customer Portal</span>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+
+    <ul class="nav-menu">
+        <li>
+            <a th:href="@{/customer}">
+                <span class="nav-icon">⌂</span>
+                Home
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/appointments}"
+               class="active"
+               aria-current="page">
+                <span class="nav-icon">◷</span>
+                My Appointments
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/customer/profile}">
+                <span class="nav-icon">♙</span>
+                My Profile
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/customer/loyalty}">
+                <span class="nav-icon">♡</span>
+                Loyalty
+            </a>
+        </li>
+
+        <li>
+            <a th:href="@{/customer/feedback}"
+               aria-current="page">
+                <span class="nav-icon">★</span>
+                Feedback
+            </a>
+        </li>
+    </ul>
+
+    <div class="nav-title">Account</div>
+
+    <ul class="nav-menu">
+        <li>
+            <a th:href="@{/settings}">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </a>
+        </li>
+    </ul>
+</aside>
+
+<main class="page narrow reschedule-main">
+
+    <!-- PAGE HEADER -->
     <div class="page-head">
+
         <div>
-            <p class="eyebrow" th:text="'Booking #' + ${appointment.id}">Booking #1</p>
+            <p class="eyebrow"
+               th:text="'Booking #' + ${appointment.id}">
+                Booking #1
+            </p>
+
             <h1>Reschedule Appointment</h1>
         </div>
-        <a class="btn ghost" th:href="@{/appointments}">Back</a>
+
+        <a class="btn ghost" th:href="@{/appointments}">
+            Back
+        </a>
+
     </div>
 
-    <div th:replace="~{appointment/fragments :: alerts}"></div>
+    <!-- SUCCESS AND ERROR MESSAGES -->
+    <div th:replace="~{customer/fragments :: alerts}"></div>
 
+
+    <!-- CURRENT APPOINTMENT DETAILS -->
     <div class="panel current">
-        <h2>Current booking</h2>
+
+        <h2>Current Booking</h2>
+
         <dl class="inline-dl">
+
             <dt>Service</dt>
-            <dd th:text="${appointment.serviceName} + ' (' + ${appointment.typeLabel} + ')'">Haircut (Regular)</dd>
+            <dd th:text="${appointment.serviceName + ' (' + appointment.typeLabel + ')'}">
+                Haircut (Regular)
+            </dd>
+
             <dt>When</dt>
-            <dd th:text="${#temporals.format(appointment.appointmentDate, 'EEE, dd MMM yyyy')} + ' at ' + ${appointment.appointmentTime}">Wed, 14 Oct 2026 at 10:00</dd>
+            <dd th:text="${#temporals.format(appointment.appointmentDate, 'EEE, dd MMM yyyy') + ' at ' + appointment.appointmentTime}">
+                Wed, 14 Oct 2026 at 10:00
+            </dd>
+
             <dt>Stylist</dt>
-            <dd th:text="${appointment.stylist}">Kasun</dd>
+            <dd th:text="${appointment.stylist}">
+                Kasun
+            </dd>
+
             <dt>Duration</dt>
-            <dd th:text="${appointment.durationMinutes} + ' min'">30 min</dd>
+            <dd th:text="${appointment.durationMinutes + ' min'}">
+                30 min
+            </dd>
+
         </dl>
+
     </div>
 
-    <form th:action="@{/appointments/{id}/reschedule(id=${appointment.id})}" th:object="${form}" method="post" class="panel">
-        <h2>New date and time</h2>
+
+    <!-- RESCHEDULE FORM -->
+    <form th:action="@{/appointments/{id}/reschedule(id=${appointment.id})}"
+          th:object="${form}"
+          method="post"
+          class="panel">
+
+        <!-- CSRF TOKEN -->
+        <input type="hidden"
+               th:if="${_csrf != null}"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}">
+
+        <h2>New Date and Time</h2>
 
         <div class="field-row three">
+
+            <!-- DATE -->
             <div class="form-group">
-                <label for="appointmentDate">Date</label>
-                <input type="date" id="appointmentDate" th:field="*{appointmentDate}"
-                       th:min="${minDate}" th:max="${maxDate}" required>
-                <p class="validation-error" th:if="${#fields.hasErrors('appointmentDate')}" th:errors="*{appointmentDate}"></p>
+
+                <label for="appointmentDate">
+                    Appointment Date
+                </label>
+
+                <input type="date"
+                       id="appointmentDate"
+                       th:field="*{appointmentDate}"
+                       th:min="${minDate}"
+                       th:max="${maxDate}"
+                       required>
+
+                <p class="validation-error"
+                   th:if="${#fields.hasErrors('appointmentDate')}"
+                   th:errors="*{appointmentDate}">
+                </p>
+
             </div>
+
+
+            <!-- TIME -->
             <div class="form-group">
-                <label for="appointmentTime">Time</label>
-                <select id="appointmentTime" th:field="*{appointmentTime}" required>
-                    <option value="">Select time</option>
-                    <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}">09:00</option>
+
+                <label for="appointmentTime">
+                    Appointment Time
+                </label>
+
+                <select id="appointmentTime"
+                        th:field="*{appointmentTime}"
+                        required>
+
+                    <option value="">
+                        Select time
+                    </option>
+
+                    <option th:each="slot : ${timeSlots}"
+                            th:value="${slot}"
+                            th:text="${slot}">
+                        09:00
+                    </option>
+
                 </select>
-                <p class="validation-error" th:if="${#fields.hasErrors('appointmentTime')}" th:errors="*{appointmentTime}"></p>
+
+                <p class="validation-error"
+                   th:if="${#fields.hasErrors('appointmentTime')}"
+                   th:errors="*{appointmentTime}">
+                </p>
+
             </div>
+
+
+            <!-- STYLIST -->
             <div class="form-group">
-                <label for="stylist">Stylist</label>
-                <select id="stylist" th:field="*{stylist}" required>
-                    <option th:each="st : ${stylists}" th:value="${st}" th:text="${st}">Kasun</option>
+
+                <label for="stylist">
+                    Stylist
+                </label>
+
+                <select id="stylist"
+                        th:field="*{stylist}"
+                        required>
+
+                    <option value="">
+                        Select stylist
+                    </option>
+
+                    <option th:each="st : ${stylists}"
+                            th:value="${st}"
+                            th:text="${st}">
+                        Kasun
+                    </option>
+
                 </select>
-                <p class="validation-error" th:if="${#fields.hasErrors('stylist')}" th:errors="*{stylist}"></p>
+
+                <p class="validation-error"
+                   th:if="${#fields.hasErrors('stylist')}"
+                   th:errors="*{stylist}">
+                </p>
+
             </div>
+
         </div>
 
+
+        <!-- INFORMATION -->
         <p class="hint">
-            After rescheduling, the booking goes back to <b>Pending</b> until the salon confirms it.
-            <span th:text="${appointment.typeLabel} + ' bookings can be moved up to ' + ${appointment.rescheduleCutoffHours} + ' hours before the start time.'"></span>
+
+            After rescheduling, the booking goes back to
+            <b>Pending</b> until the salon confirms it.
+
+            <span th:text="${appointment.typeLabel
+                + ' bookings can be moved up to '
+                + appointment.rescheduleCutoffHours
+                + ' hours before the start time.'}">
+            </span>
+
         </p>
 
+
+        <!-- BUTTONS -->
         <div class="form-actions">
-            <a class="btn ghost" th:href="@{/appointments}">Keep current time</a>
-            <button type="submit" class="btn primary">Save new time</button>
+
+            <a class="btn ghost"
+               th:href="@{/appointments}">
+                Keep Current Time
+            </a>
+
+            <button type="submit" class="btn primary">
+                Save New Time
+            </button>
+
         </div>
+
     </form>
+
 </main>
 
 </body>
