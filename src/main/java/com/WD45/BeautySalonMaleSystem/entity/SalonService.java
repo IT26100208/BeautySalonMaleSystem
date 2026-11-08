@@ -1,35 +1,27 @@
 package com.WD45.BeautySalonMaleSystem.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "services")
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Entity
-@Table(name = "salon_services")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SalonService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String category;
-
-    @Column(length = 1000)
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 100)
+    private String category;
+
+    @Column(length = 1000)
     private String description;
 
     @Column(nullable = false)
@@ -41,12 +33,15 @@ public class SalonService {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    // Default Constructor
     public SalonService() {
     }
 
-    // Parameterized Constructor
-    public SalonService(String name, String category, String description, Double price, Integer durationMinutes) {
+    public SalonService(
+            String name,
+            String category,
+            String description,
+            Double price,
+            Integer durationMinutes) {
         this.name = name;
         this.category = category;
         this.description = description;
@@ -54,8 +49,6 @@ public class SalonService {
         this.durationMinutes = durationMinutes;
         this.isActive = true;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -113,18 +106,11 @@ public class SalonService {
         this.isActive = isActive;
     }
 
-    // Helper / OOP business methods
     public String getFormattedPrice() {
-        if (price == null) {
-            return "LKR 0.00";
-        }
-        return String.format("LKR %,.2f", price);
+        return price == null ? "LKR 0.00" : String.format("LKR %,.2f", price);
     }
 
     public String getFormattedDuration() {
-        if (durationMinutes == null) {
-            return "0 mins";
-        }
-        return durationMinutes + " mins";
+        return durationMinutes == null ? "0 mins" : durationMinutes + " mins";
     }
 }
