@@ -1,11 +1,12 @@
 package com.WD45.BeautySalonMaleSystem.controller;
 
 import com.WD45.BeautySalonMaleSystem.dto.ServiceDTO;
-import com.WD45.BeautySalonMaleSystem.service.SalonServiceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.WD45.BeautySalonMaleSystem.service.SalonServiceService;
 
 import java.util.List;
 
@@ -18,7 +19,6 @@ public class CustomerServiceController {
         this.salonServiceService = salonServiceService;
     }
 
-    // VIEW SERVICES CATALOG (FOR CUSTOMERS & PUBLIC GUESTS)
     @GetMapping({"/services", "/customer/services"})
     public String viewServicesCatalog(
             @RequestParam(value = "category", required = false) String category,
@@ -28,9 +28,11 @@ public class CustomerServiceController {
         List<ServiceDTO> services;
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            services = salonServiceService.searchActiveServices(keyword);
-        } else if (category != null && !category.trim().isEmpty() && !"All".equalsIgnoreCase(category)) {
-            services = salonServiceService.getServicesByCategory(category);
+            services = salonServiceService.searchActiveServices(keyword.trim());
+        } else if (category != null
+                && !category.trim().isEmpty()
+                && !"All".equalsIgnoreCase(category.trim())) {
+            services = salonServiceService.getServicesByCategory(category.trim());
         } else {
             services = salonServiceService.getAllActiveServices();
         }
@@ -42,29 +44,8 @@ public class CustomerServiceController {
 
         return "customer/services";
     }
-}
-import com.WD45.BeautySalonMaleSystem.service.SalonServiceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller
-@RequestMapping("/services")
-public class CustomerServiceController {
-
-    @Autowired
-    private SalonServiceService salonServiceService;
-
-    @GetMapping
-    public String viewServices(Model model) {
-        model.addAttribute("services", salonServiceService.getAllServices());
-        return "customer/services-catalog";
-    }
-
-    @GetMapping("/{id}")
+    @GetMapping("/services/{id}")
     public String serviceDetails(@PathVariable Long id, Model model) {
         model.addAttribute("service", salonServiceService.getServiceById(id));
         return "customer/service-details";

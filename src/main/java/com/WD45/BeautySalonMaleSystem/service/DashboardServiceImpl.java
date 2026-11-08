@@ -1,12 +1,11 @@
 package com.WD45.BeautySalonMaleSystem.service;
-
+import com.WD45.BeautySalonMaleSystem.repository.ServiceRepository;
 import com.WD45.BeautySalonMaleSystem.dto.DashboardStatsDTO;
 import com.WD45.BeautySalonMaleSystem.entity.Appointment;
 import com.WD45.BeautySalonMaleSystem.entity.AppointmentStatus;
 import com.WD45.BeautySalonMaleSystem.entity.Customer;
 import com.WD45.BeautySalonMaleSystem.entity.SystemSettings;
 import com.WD45.BeautySalonMaleSystem.repository.AppointmentRepository;
-import com.WD45.BeautySalonMaleSystem.repository.ServiceRepository;
 import com.WD45.BeautySalonMaleSystem.repository.SettingsRepository;
 import com.WD45.BeautySalonMaleSystem.repository.StaffRepository;
 import com.WD45.BeautySalonMaleSystem.repository.UserRepository;

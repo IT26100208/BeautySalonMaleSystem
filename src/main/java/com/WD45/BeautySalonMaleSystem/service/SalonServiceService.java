@@ -7,46 +7,27 @@ import java.util.List;
 
 public interface SalonServiceService {
 
-    // READ ALL ACTIVE (For Customers / Public Booking)
     List<ServiceDTO> getAllActiveServices();
 
-    // READ ALL (For Admin Dashboard)
     List<ServiceDTO> getAllServices();
 
-    // READ ONE BY ID (Service details)
     ServiceDTO getServiceById(Long id);
 
-    // CREATE (Add service)
     ServiceDTO createService(ServiceFormDTO serviceFormDTO);
 
-    // UPDATE (Edit service)
     ServiceDTO updateService(Long id, ServiceFormDTO serviceFormDTO);
 
-    // DELETE (Delete service)
     void deleteService(Long id);
 
-    // TOGGLE STATUS (Activate / Deactivate)
     void toggleServiceStatus(Long id);
 
-    // SEARCH ACTIVE SERVICES
     List<ServiceDTO> searchActiveServices(String keyword);
 
-    // SEARCH ALL SERVICES (Admin)
     List<ServiceDTO> searchAllServices(String keyword);
 
-    // FILTER BY CATEGORY
     List<ServiceDTO> getServicesByCategory(String category);
 
-    // GET ALL CATEGORIES
-    List<String> getAllCategories();
-}
-import com.WD45.BeautySalonMaleSystem.entity.SalonService;
-import java.util.List;
+    List<ServiceDTO> getAllServicesByCategory(String category);
 
-public interface SalonServiceService {
-    List<SalonService> getAllServices();
-    SalonService getServiceById(Long id);
-    SalonService saveService(SalonService service);
-    SalonService updateService(Long id, SalonService serviceDetails);
-    void deleteService(Long id);
+    List<String> getAllCategories();
 }
