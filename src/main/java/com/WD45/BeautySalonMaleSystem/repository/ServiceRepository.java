@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+//Repositery edited 5
+
 @Repository
 public interface ServiceRepository extends JpaRepository<SalonService, Long> {
 
