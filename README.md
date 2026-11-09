@@ -7,7 +7,7 @@ A web-based appointment management module for a men's grooming salon, built with
 ## ✨ Features
 
 ### 👤 Customer
-- Register and log in (BCrypt-hashed passwords)
+- Register and log in 
 - Book an appointment (choose service, package, stylist, date and time)
 - View all your own appointments
 - Reschedule an appointment (subject to the package's cutoff time)
