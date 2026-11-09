@@ -5,4 +5,5 @@ CREATE TABLE IF NOT EXISTS services (
     price DECIMAL(10, 2),
     duration_minutes INT,
     status VARCHAR(50)
+
 );

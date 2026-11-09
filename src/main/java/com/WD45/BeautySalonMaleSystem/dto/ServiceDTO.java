@@ -102,4 +102,5 @@ public class ServiceDTO {
     public void setFormattedDuration(String formattedDuration) {
         this.formattedDuration = formattedDuration;
     }
+//
 }
